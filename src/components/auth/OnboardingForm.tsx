@@ -25,7 +25,7 @@ const years = Array.from({ length: 50 }, (_, i) => currentYear - i);
 
 const onboardingSchema = z.object({
   full_name: z.string().min(2, 'Name must be at least 2 characters').max(100),
-  email: z.string().email('Invalid email').optional().or(z.literal('')),
+  phone: z.string().optional().or(z.literal('')),
   residence: z.string().min(5, 'Please enter your full address'),
   birthday: z.date({ required_error: 'Birthday is required' }),
   year_joined: z.number().min(1950).max(currentYear),
@@ -51,7 +51,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
     resolver: zodResolver(onboardingSchema),
     defaultValues: {
       full_name: '',
-      email: '',
+      phone: '',
       residence: '',
       year_joined: currentYear,
       voice_group: undefined,
@@ -79,8 +79,8 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
       const { error } = await supabase.from('profiles').insert({
         auth_user_id: user.id,
         full_name: data.full_name,
-        phone: user.phone || '',
-        email: data.email || null,
+        phone: data.phone || null,
+        email: user.email || '',
         residence: data.residence,
         birthday: format(data.birthday, 'yyyy-MM-dd'),
         year_joined: data.year_joined,
@@ -117,7 +117,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
 
   const nextStep = async () => {
     const fieldsToValidate = step === 1 
-      ? ['full_name', 'email', 'residence', 'birthday', 'year_joined'] as const
+      ? ['full_name', 'phone', 'residence', 'birthday', 'year_joined'] as const
       : ['voice_group', ...(isInstrumentalist ? ['primary_instrument'] : []), 'care_group_leader_name', 'care_group_leader_phone'] as const;
     
     const isValid = await form.trigger(fieldsToValidate as any);
@@ -171,12 +171,15 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
 
                   <FormField
                     control={form.control}
-                    name="email"
+                    name="phone"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email (Optional)</FormLabel>
+                        <FormLabel>Phone Number (Optional)</FormLabel>
                         <FormControl>
-                          <Input {...field} type="email" placeholder="you@example.com" />
+                          <div className="relative">
+                            <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                            <Input {...field} type="tel" placeholder="+234 XXX XXX XXXX" className="pl-10" />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>

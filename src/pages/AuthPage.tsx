@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { PhoneAuthForm } from '@/components/auth/PhoneAuthForm';
+import { EmailAuthForm } from '@/components/auth/EmailAuthForm';
 import { OnboardingForm } from '@/components/auth/OnboardingForm';
 import { PageLoader } from '@/components/common/LoadingSpinner';
 
@@ -24,6 +24,6 @@ export default function AuthPage() {
     return <OnboardingForm onComplete={() => navigate('/dashboard')} />;
   }
 
-  // Show phone auth form
-  return <PhoneAuthForm onAuthSuccess={() => {}} />;
+  // Show email auth form
+  return <EmailAuthForm onAuthSuccess={() => {}} />;
 }

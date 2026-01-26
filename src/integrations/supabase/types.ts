@@ -206,10 +206,10 @@ export type Database = {
           care_group_leader_name: string
           care_group_leader_phone: string
           created_at: string
-          email: string | null
+          email: string
           full_name: string
           id: string
-          phone: string
+          phone: string | null
           primary_instrument:
             | Database["public"]["Enums"]["instrument_type"]
             | null
@@ -227,10 +227,10 @@ export type Database = {
           care_group_leader_name: string
           care_group_leader_phone: string
           created_at?: string
-          email?: string | null
+          email: string
           full_name: string
           id?: string
-          phone: string
+          phone?: string | null
           primary_instrument?:
             | Database["public"]["Enums"]["instrument_type"]
             | null
@@ -248,10 +248,10 @@ export type Database = {
           care_group_leader_name?: string
           care_group_leader_phone?: string
           created_at?: string
-          email?: string | null
+          email?: string
           full_name?: string
           id?: string
-          phone?: string
+          phone?: string | null
           primary_instrument?:
             | Database["public"]["Enums"]["instrument_type"]
             | null
