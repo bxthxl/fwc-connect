@@ -1,37 +1,34 @@
 
 
-# Switch to Email Magic Link Authentication
+# Switch to Email and Password Authentication
 
 ## Overview
-Replace phone OTP authentication with email magic link. This is free, doesn't require Twilio, and users will receive a clickable login link in their email.
+Replace email magic link authentication with traditional email + password login. Users will create an account with a password and sign in directly without needing to check their email each time.
 
 ---
 
 ## What Changes
 
-### 1. New Email Authentication Form
-Create `EmailAuthForm.tsx` to replace the phone form:
+### 1. New Email/Password Authentication Form
+Replace `EmailAuthForm.tsx` with a new form that:
 - Email input field with validation
-- "Send Magic Link" button
-- Success screen after sending (tells user to check email)
-- Handles the magic link callback automatically via Supabase
+- Password input field with show/hide toggle
+- Toggle between "Sign In" and "Create Account" modes
+- Password confirmation for sign-up
+- Password strength indicator (optional, for better UX)
+- "Forgot Password" link (for password reset flow)
 
-### 2. Database Schema Update
-Adjust the profiles table to reflect email-based auth:
-- Make `email` column required (NOT NULL) since it's now the login identifier
-- Make `phone` column optional (nullable) since it's no longer required for auth
-- Remove the UNIQUE constraint from phone (keep UNIQUE on email)
+### 2. Authentication Methods
+Use Supabase's built-in methods:
+- `signUp()` for new account creation
+- `signInWithPassword()` for returning users
+- `resetPasswordForEmail()` for password reset
 
-### 3. Update Onboarding Form
-- Remove email from the form (it's already captured from auth)
-- Add phone number as an optional field during registration
-- Pre-fill email from the authenticated user
-
-### 4. Update Auth Context
-- Fetch email from `user.email` instead of `user.phone`
-
-### 5. Update Type Definitions
-- Adjust the Profile interface to reflect email as required and phone as optional
+### 3. Password Reset Flow
+Add a simple password reset flow:
+- User clicks "Forgot Password"
+- Enters email to receive reset link
+- Clicks link in email to set new password
 
 ---
 
@@ -39,21 +36,32 @@ Adjust the profiles table to reflect email-based auth:
 
 ```text
 ┌─────────────────────────────────────────────────────────────┐
-│                    Authentication Flow                       │
+│              New User - Sign Up Flow                         │
 ├─────────────────────────────────────────────────────────────┤
 │                                                              │
-│  1. User enters email address                                │
+│  1. User enters email and password                           │
 │                    ↓                                         │
-│  2. Clicks "Send Magic Link"                                 │
+│  2. Clicks "Create Account"                                  │
 │                    ↓                                         │
-│  3. Sees "Check your email" message                          │
+│  3. Account created (auto-confirmed)                         │
 │                    ↓                                         │
-│  4. User clicks link in email                                │
+│  4. Redirected to Onboarding form                            │
 │                    ↓                                         │
-│  5. Redirected back to app (auto-authenticated)              │
+│  5. Complete profile → Dashboard                             │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│            Existing User - Sign In Flow                      │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│  1. User enters email and password                           │
 │                    ↓                                         │
-│  6. New users → Onboarding form                              │
-│     Existing users → Dashboard                               │
+│  2. Clicks "Sign In"                                         │
+│                    ↓                                         │
+│  3. Authenticated immediately                                │
+│                    ↓                                         │
+│  4. Redirected to Dashboard                                  │
 │                                                              │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -65,33 +73,41 @@ Adjust the profiles table to reflect email-based auth:
 ### Files to Create
 | File | Purpose |
 |------|---------|
-| `src/components/auth/EmailAuthForm.tsx` | New magic link authentication form |
+| `src/components/auth/EmailPasswordAuthForm.tsx` | New email/password authentication form with sign-in/sign-up toggle |
 
 ### Files to Modify
 | File | Changes |
 |------|---------|
-| `src/pages/AuthPage.tsx` | Use `EmailAuthForm` instead of `PhoneAuthForm` |
-| `src/components/auth/OnboardingForm.tsx` | Email pre-filled, phone now optional input |
-| `src/types/database.ts` | Update Profile interface (email required, phone optional) |
+| `src/pages/AuthPage.tsx` | Use `EmailPasswordAuthForm` instead of `EmailAuthForm` |
 
-### Database Migration
-```sql
--- Make email required (NOT NULL) with unique constraint
--- Make phone optional (remove NOT NULL)
-ALTER TABLE public.profiles 
-  ALTER COLUMN email SET NOT NULL,
-  ALTER COLUMN phone DROP NOT NULL;
+### Files to Delete
+| File | Reason |
+|------|--------|
+| `src/components/auth/EmailAuthForm.tsx` | No longer needed (replaced by EmailPasswordAuthForm) |
 
--- Add unique constraint on email, remove from phone
-ALTER TABLE public.profiles DROP CONSTRAINT profiles_phone_key;
-ALTER TABLE public.profiles ADD CONSTRAINT profiles_email_key UNIQUE (email);
-```
+### No Database Changes Required
+- The profiles table already has `email` as NOT NULL UNIQUE
+- Auto-confirm email is already enabled
+
+---
+
+## Component Design: EmailPasswordAuthForm
+
+The new form will include:
+
+1. **Mode toggle**: "Sign In" / "Create Account" tabs or link
+2. **Email field**: With validation
+3. **Password field**: With show/hide toggle, minimum 6 characters
+4. **Confirm Password**: Only shown in sign-up mode
+5. **Submit button**: Dynamic text based on mode
+6. **Forgot Password link**: Opens reset password view
+7. **Error handling**: Clear error messages for common issues
 
 ---
 
 ## Benefits
-- **Free**: No SMS provider costs
-- **Simpler**: No OTP code entry required
-- **Reliable**: Email delivery is more reliable than SMS
-- **Secure**: Magic links expire and are single-use
+- **Faster login**: No need to check email each time
+- **Familiar UX**: Standard login pattern users expect
+- **Offline access**: Can sign in without email access
+- **More control**: Users manage their own passwords
 
