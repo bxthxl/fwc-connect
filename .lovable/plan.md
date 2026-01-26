@@ -1,70 +1,36 @@
 
 
-# Switch to Email and Password Authentication
+# Improve Birthday Calendar Selector
 
-## Overview
-Replace email magic link authentication with traditional email + password login. Users will create an account with a password and sign in directly without needing to check their email each time.
+## The Problem
+The current calendar only lets you navigate one month at a time using arrow buttons. To select a birthday from 30 years ago, you'd need to click the back arrow **360 times** - extremely frustrating!
 
----
+## The Solution
+Add dropdown selectors for **month** and **year** directly in the calendar header. This lets users:
+1. Select the year (e.g., 1990) from a dropdown
+2. Select the month (e.g., March) from another dropdown
+3. Then pick the specific day
 
-## What Changes
-
-### 1. New Email/Password Authentication Form
-Replace `EmailAuthForm.tsx` with a new form that:
-- Email input field with validation
-- Password input field with show/hide toggle
-- Toggle between "Sign In" and "Create Account" modes
-- Password confirmation for sign-up
-- Password strength indicator (optional, for better UX)
-- "Forgot Password" link (for password reset flow)
-
-### 2. Authentication Methods
-Use Supabase's built-in methods:
-- `signUp()` for new account creation
-- `signInWithPassword()` for returning users
-- `resetPasswordForEmail()` for password reset
-
-### 3. Password Reset Flow
-Add a simple password reset flow:
-- User clicks "Forgot Password"
-- Enters email to receive reset link
-- Clicks link in email to set new password
+This is the standard approach for birthday pickers and makes navigation effortless.
 
 ---
 
-## User Experience Flow
+## How It Will Look
 
 ```text
-┌─────────────────────────────────────────────────────────────┐
-│              New User - Sign Up Flow                         │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  1. User enters email and password                           │
-│                    ↓                                         │
-│  2. Clicks "Create Account"                                  │
-│                    ↓                                         │
-│  3. Account created (auto-confirmed)                         │
-│                    ↓                                         │
-│  4. Redirected to Onboarding form                            │
-│                    ↓                                         │
-│  5. Complete profile → Dashboard                             │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
-
-┌─────────────────────────────────────────────────────────────┐
-│            Existing User - Sign In Flow                      │
-├─────────────────────────────────────────────────────────────┤
-│                                                              │
-│  1. User enters email and password                           │
-│                    ↓                                         │
-│  2. Clicks "Sign In"                                         │
-│                    ↓                                         │
-│  3. Authenticated immediately                                │
-│                    ↓                                         │
-│  4. Redirected to Dashboard                                  │
-│                                                              │
-└─────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│  [March ▼]  [1990 ▼]                    │
+├─────────────────────────────────────────┤
+│  Sun  Mon  Tue  Wed  Thu  Fri  Sat      │
+│   1    2    3    4    5    6    7       │
+│   8    9   10   11   12   13   14       │
+│  15   16   17   18   19   20   21       │
+│  22   23   24   25   26   27   28       │
+│  29   30   31                           │
+└─────────────────────────────────────────┘
 ```
+
+Users can quickly jump to any year/month combination, then tap the day.
 
 ---
 
@@ -73,41 +39,22 @@ Add a simple password reset flow:
 ### Files to Create
 | File | Purpose |
 |------|---------|
-| `src/components/auth/EmailPasswordAuthForm.tsx` | New email/password authentication form with sign-in/sign-up toggle |
+| `src/components/ui/date-picker-with-dropdowns.tsx` | New calendar component with month/year dropdowns |
 
 ### Files to Modify
 | File | Changes |
 |------|---------|
-| `src/pages/AuthPage.tsx` | Use `EmailPasswordAuthForm` instead of `EmailAuthForm` |
+| `src/components/auth/OnboardingForm.tsx` | Use the new date picker component for birthday field |
 
-### Files to Delete
-| File | Reason |
-|------|--------|
-| `src/components/auth/EmailAuthForm.tsx` | No longer needed (replaced by EmailPasswordAuthForm) |
+### Implementation Approach
+1. Create a new date picker component that wraps react-day-picker with:
+   - Year dropdown (1920 to current year)
+   - Month dropdown (January - December)
+   - Uses `captionLayout="dropdown-buttons"` mode from react-day-picker
+   - Proper styling with Select components for consistency
+
+2. Update the birthday field in OnboardingForm to use this enhanced picker
 
 ### No Database Changes Required
-- The profiles table already has `email` as NOT NULL UNIQUE
-- Auto-confirm email is already enabled
-
----
-
-## Component Design: EmailPasswordAuthForm
-
-The new form will include:
-
-1. **Mode toggle**: "Sign In" / "Create Account" tabs or link
-2. **Email field**: With validation
-3. **Password field**: With show/hide toggle, minimum 6 characters
-4. **Confirm Password**: Only shown in sign-up mode
-5. **Submit button**: Dynamic text based on mode
-6. **Forgot Password link**: Opens reset password view
-7. **Error handling**: Clear error messages for common issues
-
----
-
-## Benefits
-- **Faster login**: No need to check email each time
-- **Familiar UX**: Standard login pattern users expect
-- **Offline access**: Can sign in without email access
-- **More control**: Users manage their own passwords
+This is purely a UI improvement.
 
