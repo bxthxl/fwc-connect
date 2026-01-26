@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Calendar } from '@/components/ui/calendar';
+import { DatePickerWithDropdowns } from '@/components/ui/date-picker-with-dropdowns';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -226,13 +226,12 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
                               </FormControl>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0" align="start">
-                              <Calendar
-                                mode="single"
+                              <DatePickerWithDropdowns
                                 selected={field.value}
                                 onSelect={field.onChange}
                                 disabled={(date) => date > new Date() || date < new Date("1920-01-01")}
-                                initialFocus
-                                className="pointer-events-auto"
+                                toYear={new Date().getFullYear()}
+                                fromYear={1920}
                               />
                             </PopoverContent>
                           </Popover>
