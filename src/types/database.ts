@@ -23,8 +23,8 @@ export interface Profile {
   id: string;
   auth_user_id: string;
   full_name: string;
-  phone: string;
-  email: string | null;
+  phone: string | null;
+  email: string;
   residence: string;
   birthday: string;
   year_joined: number;
@@ -91,8 +91,8 @@ export interface Announcement {
 // Form types for registration
 export interface RegistrationFormData {
   full_name: string;
-  phone: string;
-  email?: string;
+  phone?: string;
+  email: string;
   residence: string;
   birthday: string;
   year_joined: number;
