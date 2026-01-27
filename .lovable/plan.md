@@ -1,65 +1,75 @@
 
 
-# Fix Member Dashboard to Display Real Data
+# Fix: Allow Users to Read Their Own Roles
 
 ## The Problem
-The member dashboard (`/dashboard`) is showing **hardcoded static values** instead of fetching actual data from the database:
-- "Upcoming Meetings" always shows `0`
-- "Published Minutes" always shows `0`  
-- "Announcements" always shows `0`
-- "Total Members" always shows `1`
-- "Next Meeting" card never shows real meeting data
 
-Meanwhile, the Admin Overview page correctly uses data hooks (`useMeetings`, `useMinutes`, `useAnnouncements`) to display live data.
+The `user_roles` table has an RLS policy that **only allows admins to read roles**:
+
+```sql
+Policy: "Admins can read all roles"
+Command: SELECT
+Using: is_admin(auth.uid())
+```
+
+This creates a catch-22:
+- When **bless john** logs in, the app tries to fetch their roles from `user_roles`
+- But bless is NOT an admin, so RLS blocks the SELECT query
+- The frontend receives an empty roles array
+- Therefore `canTakeAttendance` and `canManageMinutes` are both `false`
+- bless cannot see or access the attendance/minutes features
+
+**Bethel (admin)** can read roles and see the admin features, but **bless** cannot see their own roles even though they exist in the database.
 
 ## The Solution
-Update `DashboardPage.tsx` to:
-1. Import and use the existing data hooks
-2. Fetch real counts for meetings, minutes, and announcements
-3. Display the actual next upcoming meeting
-4. Show active announcements to members
-5. Add proper loading states
+
+Add a new RLS policy that allows authenticated users to read **their own roles**:
+
+```sql
+CREATE POLICY "Users can read own roles"
+ON public.user_roles FOR SELECT
+USING (user_id = public.get_profile_id(auth.uid()));
+```
+
+This uses the existing `get_profile_id` function to match the user's `auth.uid()` to their profile ID, allowing them to read only their own role records.
 
 ---
 
-## What Will Change
+## Technical Changes
 
-### Before (Hardcoded)
-```text
-Upcoming Meetings: 0
-Published Minutes: 0
-Announcements: 0
-Next Meeting: "No upcoming meetings scheduled"
+### Database Migration (1 policy to add)
+
+| Table | Policy Name | Command | Purpose |
+|-------|-------------|---------|---------|
+| `user_roles` | "Users can read own roles" | SELECT | Allow users to fetch their own roles on login |
+
+### SQL to Execute
+
+```sql
+-- Allow users to read their own roles
+CREATE POLICY "Users can read own roles"
+ON public.user_roles FOR SELECT
+USING (user_id = public.get_profile_id(auth.uid()));
 ```
 
-### After (Live Data)
-```text
-Upcoming Meetings: 3  (actual count from database)
-Published Minutes: 5  (actual count of published minutes)
-Announcements: 1      (count of currently active announcements)
-Next Meeting: "Choir Practice - Jan 30, 2026 at 6:00 PM"
-```
+### No Code Changes Required
+
+The frontend code in `AuthContext.tsx` is already correct - it queries `user_roles` filtered by the user's profile ID. The only issue is the missing RLS policy.
 
 ---
 
-## Technical Details
+## After the Fix
 
-### File to Modify
-| File | Changes |
-|------|---------|
-| `src/pages/DashboardPage.tsx` | Add data hooks, replace hardcoded values, show next meeting, display active announcements |
+| User | Roles in DB | Can Read Own Roles | Features Visible |
+|------|-------------|-------------------|------------------|
+| George-Nwaeke Bethel | admin | Yes (admin policy) | All admin features |
+| bless john | minutes_taker, attendance_taker | Yes (new policy) | Minutes + Attendance management |
 
-### Implementation
-1. **Import data hooks**: `useMeetings`, `useMinutes`, `useAnnouncements`
-2. **Fetch data**:
-   - Upcoming meetings with `useMeetings('upcoming')`
-   - Published minutes with `useMinutes()` (already filters to published for non-admin)
-   - Active announcements with `useAnnouncements()`
-3. **Display real counts** in the stats cards
-4. **Show next meeting details**: Title, date, time, location
-5. **Show active announcements** section with announcement cards
-6. **Add loading spinner** while data is being fetched
-
-### No Database Changes Required
-This is purely a frontend fix using existing hooks and data.
+When bless logs in after this fix:
+1. `fetchRoles()` queries `user_roles` with `user_id = bless's profile ID`
+2. New RLS policy allows the query (matching own roles)
+3. Returns `['minutes_taker', 'attendance_taker']`
+4. `canTakeAttendance = true`, `canManageMinutes = true`
+5. Management navigation links appear in sidebar
+6. bless can access `/admin/attendance` and `/admin/minutes`
 
