@@ -162,7 +162,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <SheetContent side="left" className="w-64 p-4">
                 <div className="flex items-center gap-2 mb-6">
                   <img src={fwcLogo} alt="FWC" className="h-8 w-8" />
-                  <span className="font-semibold">FWC Worshippers</span>
+                  <span className="font-semibold">FWC Worship Team</span>
                 </div>
                 <NavLinks onNavigate={() => setMobileOpen(false)} />
               </SheetContent>
@@ -171,7 +171,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             {/* Logo */}
             <Link to="/dashboard" className="flex items-center gap-2">
               <img src={fwcLogo} alt="FWC" className="h-8 w-8" />
-              <span className="font-semibold hidden sm:inline">FWC Worshippers</span>
+              <span className="font-semibold hidden sm:inline">FWC Worship Team</span>
             </Link>
           </div>
 
