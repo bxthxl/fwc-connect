@@ -199,6 +199,47 @@ export type Database = {
           },
         ]
       }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          is_read: boolean
+          reference_id: string | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          reference_id?: string | null
+          title: string
+          type: Database["public"]["Enums"]["notification_type"]
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          reference_id?: string | null
+          title?: string
+          type?: Database["public"]["Enums"]["notification_type"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           auth_user_id: string
@@ -425,6 +466,7 @@ export type Database = {
         | "conga_drums"
         | "flute"
         | "talking_drums"
+      notification_type: "announcement" | "weekly_song"
       song_category: "praise_worship" | "friday_special" | "sunday_special"
       voice_group: "soprano" | "alto" | "tenor" | "bass" | "instrumentalist"
     }
@@ -568,6 +610,7 @@ export const Constants = {
         "flute",
         "talking_drums",
       ],
+      notification_type: ["announcement", "weekly_song"],
       song_category: ["praise_worship", "friday_special", "sunday_special"],
       voice_group: ["soprano", "alto", "tenor", "bass", "instrumentalist"],
     },
