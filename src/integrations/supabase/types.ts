@@ -268,6 +268,53 @@ export type Database = {
         }
         Relationships: []
       }
+      songs: {
+        Row: {
+          artist: string | null
+          audio_url: string | null
+          category: Database["public"]["Enums"]["song_category"] | null
+          created_at: string
+          created_by: string | null
+          id: string
+          lyrics: string | null
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          artist?: string | null
+          audio_url?: string | null
+          category?: Database["public"]["Enums"]["song_category"] | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          lyrics?: string | null
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          artist?: string | null
+          audio_url?: string | null
+          category?: Database["public"]["Enums"]["song_category"] | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          lyrics?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "songs_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -293,6 +340,54 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      weekly_songs: {
+        Row: {
+          assigned_by: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          song_id: string
+          song_type: Database["public"]["Enums"]["song_category"]
+          updated_at: string
+          week_start: string
+        }
+        Insert: {
+          assigned_by?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          song_id: string
+          song_type: Database["public"]["Enums"]["song_category"]
+          updated_at?: string
+          week_start: string
+        }
+        Update: {
+          assigned_by?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          song_id?: string
+          song_type?: Database["public"]["Enums"]["song_category"]
+          updated_at?: string
+          week_start?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_songs_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "weekly_songs_song_id_fkey"
+            columns: ["song_id"]
+            isOneToOne: false
+            referencedRelation: "songs"
             referencedColumns: ["id"]
           },
         ]
@@ -330,6 +425,7 @@ export type Database = {
         | "conga_drums"
         | "flute"
         | "talking_drums"
+      song_category: "praise_worship" | "friday_special" | "sunday_special"
       voice_group: "soprano" | "alto" | "tenor" | "bass" | "instrumentalist"
     }
     CompositeTypes: {
@@ -472,6 +568,7 @@ export const Constants = {
         "flute",
         "talking_drums",
       ],
+      song_category: ["praise_worship", "friday_special", "sunday_special"],
       voice_group: ["soprano", "alto", "tenor", "bass", "instrumentalist"],
     },
   },

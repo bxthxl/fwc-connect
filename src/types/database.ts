@@ -17,6 +17,8 @@ export type InstrumentType =
 
 export type AttendanceStatus = 'present' | 'absent' | 'excused';
 
+export type SongCategory = 'praise_worship' | 'friday_special' | 'sunday_special';
+
 export type AppRole = 'admin' | 'attendance_taker' | 'minutes_taker';
 
 export interface Profile {

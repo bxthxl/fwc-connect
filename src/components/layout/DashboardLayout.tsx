@@ -27,6 +27,7 @@ import {
   Shield,
   PenTool,
   Megaphone,
+  Music,
 } from 'lucide-react';
 import fwcLogo from '@/assets/fwc-logo.png';
 
@@ -42,6 +43,7 @@ interface NavItem {
 const memberNavItems: NavItem[] = [
   { label: 'Home', href: '/dashboard', icon: Home },
   { label: 'Meetings', href: '/meetings', icon: Calendar },
+  { label: 'Songs', href: '/songs', icon: Music },
   { label: 'Minutes', href: '/minutes', icon: FileText },
   { label: 'Profile', href: '/profile', icon: User },
 ];
@@ -52,6 +54,7 @@ const adminNavItems: NavItem[] = [
   { label: 'Meetings', href: '/admin/meetings', icon: Calendar, adminOnly: true },
   { label: 'Attendance', href: '/admin/attendance', icon: ClipboardCheck, attendanceOnly: true },
   { label: 'Minutes', href: '/admin/minutes', icon: PenTool, minutesOnly: true },
+  { label: 'Songs', href: '/admin/songs', icon: Music, adminOnly: true },
   { label: 'Announcements', href: '/admin/announcements', icon: Megaphone, adminOnly: true },
 ];
 
