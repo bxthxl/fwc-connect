@@ -17,6 +17,8 @@ import MeetingsManagementPage from "./pages/admin/MeetingsManagementPage";
 import AttendancePage from "./pages/admin/AttendancePage";
 import MinutesManagementPage from "./pages/admin/MinutesManagementPage";
 import AnnouncementsPage from "./pages/admin/AnnouncementsPage";
+import SongsManagementPage from "./pages/admin/SongsManagementPage";
+import SongsPage from "./pages/SongsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -74,6 +76,7 @@ function AppRoutes() {
       <Route path="/meetings" element={<ProtectedRoute><MeetingsPage /></ProtectedRoute>} />
       <Route path="/minutes" element={<ProtectedRoute><MinutesPage /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+      <Route path="/songs" element={<ProtectedRoute><SongsPage /></ProtectedRoute>} />
       
       {/* Admin Routes */}
       <Route path="/admin" element={<AdminRoute requireAdmin><AdminOverviewPage /></AdminRoute>} />
@@ -82,6 +85,7 @@ function AppRoutes() {
       <Route path="/admin/attendance" element={<AdminRoute requireAttendance><AttendancePage /></AdminRoute>} />
       <Route path="/admin/minutes" element={<AdminRoute requireMinutes><MinutesManagementPage /></AdminRoute>} />
       <Route path="/admin/announcements" element={<AdminRoute requireAdmin><AnnouncementsPage /></AdminRoute>} />
+      <Route path="/admin/songs" element={<AdminRoute requireAdmin><SongsManagementPage /></AdminRoute>} />
       
       <Route path="*" element={<NotFound />} />
     </Routes>
