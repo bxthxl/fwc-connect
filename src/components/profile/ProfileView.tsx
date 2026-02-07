@@ -2,6 +2,7 @@ import { Profile, VOICE_GROUP_LABELS, INSTRUMENT_LABELS } from '@/types/database
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { VoiceGroupBadge } from '@/components/common/VoiceGroupBadge';
 import { InstrumentBadge } from '@/components/common/InstrumentBadge';
+import { MemberAvatar } from '@/components/common/MemberAvatar';
 import { Button } from '@/components/ui/button';
 import { Pencil, Calendar, MapPin, Phone, Mail, Users } from 'lucide-react';
 import { format } from 'date-fns';
@@ -16,13 +17,16 @@ export function ProfileView({ profile, onEdit }: ProfileViewProps) {
     <div className="space-y-6">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle className="text-2xl">{profile.full_name}</CardTitle>
-            <div className="flex items-center gap-2 mt-2">
-              <VoiceGroupBadge group={profile.voice_group} />
-              {profile.primary_instrument && (
-                <InstrumentBadge instrument={profile.primary_instrument} />
-              )}
+          <div className="flex items-center gap-4">
+            <MemberAvatar profile={profile} size="lg" />
+            <div>
+              <CardTitle className="text-2xl">{profile.full_name}</CardTitle>
+              <div className="flex items-center gap-2 mt-2">
+                <VoiceGroupBadge group={profile.voice_group} />
+                {profile.primary_instrument && (
+                  <InstrumentBadge instrument={profile.primary_instrument} />
+                )}
+              </div>
             </div>
           </div>
           <Button variant="outline" size="sm" onClick={onEdit}>

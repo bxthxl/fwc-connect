@@ -4,6 +4,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { ProfileView } from '@/components/profile/ProfileView';
 import { ProfileEditForm } from '@/components/profile/ProfileEditForm';
 import { PasswordChangeForm } from '@/components/profile/PasswordChangeForm';
+import { AvatarUpload } from '@/components/profile/AvatarUpload';
 import { PageLoader } from '@/components/common/LoadingSpinner';
 
 export default function ProfilePage() {
@@ -25,6 +26,9 @@ export default function ProfilePage() {
           <h1 className="text-3xl font-bold">My Profile</h1>
           <p className="text-muted-foreground">Manage your personal information and settings</p>
         </div>
+
+        {/* Avatar Upload Section */}
+        <AvatarUpload />
 
         {isEditing ? (
           <ProfileEditForm
