@@ -1,8 +1,10 @@
 import { useBirthdays } from '@/hooks/useBirthdays';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { MemberAvatar } from '@/components/common/MemberAvatar';
 import { Cake, PartyPopper, Gift } from 'lucide-react';
 import { format } from 'date-fns';
+import { Link } from 'react-router-dom';
 
 export function BirthdayWidget() {
   const { todaysBirthdays, upcomingBirthdays, isLoading } = useBirthdays();
@@ -17,10 +19,15 @@ export function BirthdayWidget() {
   return (
     <Card className={hasTodayBirthdays ? 'border-[hsl(var(--accent))]/50 bg-[hsl(var(--accent))]/5' : ''}>
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <Cake className="h-5 w-5 text-[hsl(var(--accent))]" />
-          Birthdays
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Cake className="h-5 w-5 text-[hsl(var(--accent))]" />
+            Birthdays
+          </CardTitle>
+          <Button variant="ghost" size="sm" asChild>
+            <Link to="/birthdays">View All</Link>
+          </Button>
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Today's Birthdays */}
