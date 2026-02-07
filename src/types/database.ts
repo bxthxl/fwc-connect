@@ -91,6 +91,38 @@ export interface Announcement {
   updated_at: string;
 }
 
+export interface OnboardingContent {
+  id: string;
+  key: string;
+  title: string;
+  body: string;
+  sort_order: number;
+  is_active: boolean;
+  updated_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DiscussionTopic {
+  id: string;
+  title: string;
+  body: string;
+  created_by: string;
+  is_pinned: boolean;
+  is_locked: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DiscussionReply {
+  id: string;
+  topic_id: string;
+  body: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
 // Form types for registration
 export interface RegistrationFormData {
   full_name: string;

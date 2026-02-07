@@ -28,6 +28,12 @@ import {
   PenTool,
   Megaphone,
   Music,
+  Cake,
+  MessageSquare,
+  BookOpen,
+  Shuffle,
+  MapPin,
+  HelpCircle,
 } from 'lucide-react';
 import fwcLogo from '@/assets/fwc-logo.png';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
@@ -46,6 +52,8 @@ const memberNavItems: NavItem[] = [
   { label: 'Meetings', href: '/meetings', icon: Calendar },
   { label: 'Songs', href: '/songs', icon: Music },
   { label: 'Minutes', href: '/minutes', icon: FileText },
+  { label: 'Birthdays', href: '/birthdays', icon: Cake },
+  { label: 'Discussions', href: '/discussions', icon: MessageSquare },
   { label: 'Profile', href: '/profile', icon: User },
 ];
 
@@ -57,6 +65,9 @@ const adminNavItems: NavItem[] = [
   { label: 'Minutes', href: '/admin/minutes', icon: PenTool, minutesOnly: true },
   { label: 'Songs', href: '/admin/songs', icon: Music, adminOnly: true },
   { label: 'Announcements', href: '/admin/announcements', icon: Megaphone, adminOnly: true },
+  { label: 'Onboarding', href: '/admin/onboarding', icon: BookOpen, adminOnly: true },
+  { label: 'BGV Selector', href: '/admin/bgv-selector', icon: Shuffle, adminOnly: true },
+  { label: 'Wuye Settings', href: '/admin/wuye-settings', icon: MapPin, adminOnly: true },
 ];
 
 interface DashboardLayoutProps {
@@ -203,11 +214,18 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild>
+              <DropdownMenuItem asChild>
                   <Link to="/profile" className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
                     Profile
                   </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => {
+                  const event = new CustomEvent('open-onboarding-guide');
+                  window.dispatchEvent(event);
+                }} className="cursor-pointer">
+                  <HelpCircle className="mr-2 h-4 w-4" />
+                  App Guide
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-destructive">

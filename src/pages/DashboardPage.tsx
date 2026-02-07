@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,11 +10,27 @@ import { useMinutes } from '@/hooks/useMinutes';
 import { useActiveAnnouncements } from '@/hooks/useAnnouncements';
 import { useMembers } from '@/hooks/useMembers';
 import { BirthdayWidget } from '@/components/dashboard/BirthdayWidget';
+import { WelcomeDialog } from '@/components/onboarding/WelcomeDialog';
 import { format } from 'date-fns';
 
 export default function DashboardPage() {
   const { profile, isAdmin } = useAuth();
-  
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  // Check if user needs onboarding
+  useEffect(() => {
+    if (profile && !(profile as any).has_seen_onboarding) {
+      setShowOnboarding(true);
+    }
+  }, [profile]);
+
+  // Listen for "App Guide" menu trigger
+  useEffect(() => {
+    const handler = () => setShowOnboarding(true);
+    window.addEventListener('open-onboarding-guide', handler);
+    return () => window.removeEventListener('open-onboarding-guide', handler);
+  }, []);
+
   const { data: upcomingMeetings, isLoading: meetingsLoading } = useMeetings('upcoming');
   const { data: publishedMinutes, isLoading: minutesLoading } = useMinutes();
   const { data: activeAnnouncements, isLoading: announcementsLoading } = useActiveAnnouncements();
@@ -38,6 +54,7 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout>
+      <WelcomeDialog open={showOnboarding} onOpenChange={setShowOnboarding} />
       <div className="space-y-6 animate-fade-in">
         {/* Welcome Section */}
         <div className="space-y-2">
