@@ -30,6 +30,7 @@ import {
   Music,
 } from 'lucide-react';
 import fwcLogo from '@/assets/fwc-logo.png';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 
 interface NavItem {
   label: string;
@@ -179,7 +180,8 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
 
           {/* User menu */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
+            <NotificationBell />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-9 w-9 rounded-full">
