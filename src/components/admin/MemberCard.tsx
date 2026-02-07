@@ -1,8 +1,9 @@
 import { Profile, VOICE_GROUP_LABELS, AppRole, ROLE_LABELS } from '@/types/database';
 import { Card, CardContent } from '@/components/ui/card';
 import { VoiceGroupBadge } from '@/components/common/VoiceGroupBadge';
+import { MemberAvatar } from '@/components/common/MemberAvatar';
 import { Badge } from '@/components/ui/badge';
-import { User, Phone, Mail } from 'lucide-react';
+import { Phone, Mail } from 'lucide-react';
 
 interface MemberCardProps {
   member: Profile;
@@ -18,10 +19,8 @@ export function MemberCard({ member, roles = [], onClick }: MemberCardProps) {
     >
       <CardContent className="p-4">
         <div className="flex items-start justify-between">
-          <div className="flex items-start gap-3">
-            <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-              <User className="h-5 w-5 text-primary" />
-            </div>
+            <div className="flex items-start gap-3">
+              <MemberAvatar profile={member} size="md" />
             <div>
               <h3 className="font-medium">{member.full_name}</h3>
               <div className="flex items-center gap-2 mt-1">

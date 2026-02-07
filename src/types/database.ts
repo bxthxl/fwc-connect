@@ -33,6 +33,7 @@ export interface Profile {
   secondary_instrument: InstrumentType | null;
   care_group_leader_name: string;
   care_group_leader_phone: string;
+  avatar_url: string | null;
   created_at: string;
   updated_at: string;
 }

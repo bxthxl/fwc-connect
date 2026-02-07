@@ -202,6 +202,7 @@ export type Database = {
       profiles: {
         Row: {
           auth_user_id: string
+          avatar_url: string | null
           birthday: string
           care_group_leader_name: string
           care_group_leader_phone: string
@@ -223,6 +224,7 @@ export type Database = {
         }
         Insert: {
           auth_user_id: string
+          avatar_url?: string | null
           birthday: string
           care_group_leader_name: string
           care_group_leader_phone: string
@@ -244,6 +246,7 @@ export type Database = {
         }
         Update: {
           auth_user_id?: string
+          avatar_url?: string | null
           birthday?: string
           care_group_leader_name?: string
           care_group_leader_phone?: string
