@@ -98,7 +98,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
       await refreshProfile();
       
       toast({
-        title: 'Welcome to FWC!',
+        title: 'Welcome to FWC Worship Team!',
         description: 'Your profile has been created successfully.',
       });
       

@@ -9,6 +9,7 @@ import { useMeetings } from '@/hooks/useMeetings';
 import { useMinutes } from '@/hooks/useMinutes';
 import { useActiveAnnouncements } from '@/hooks/useAnnouncements';
 import { useMembers } from '@/hooks/useMembers';
+import { BirthdayWidget } from '@/components/dashboard/BirthdayWidget';
 import { format } from 'date-fns';
 
 export default function DashboardPage() {
@@ -135,6 +136,9 @@ export default function DashboardPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Birthday Highlights */}
+        <BirthdayWidget />
 
         {/* Active Announcements */}
         {activeAnnouncements && activeAnnouncements.length > 0 && (

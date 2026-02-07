@@ -137,7 +137,7 @@ export function EmailPasswordAuthForm({ onAuthSuccess }: EmailPasswordAuthFormPr
 
       toast({
         title: 'Account created!',
-        description: 'Welcome to FWC. Let\'s set up your profile.',
+        description: 'Welcome to FWC Worship Team. Let\'s set up your profile.',
       });
     } catch (error: any) {
       console.error('Error signing up:', error);
@@ -312,7 +312,7 @@ export function EmailPasswordAuthForm({ onAuthSuccess }: EmailPasswordAuthFormPr
             />
           </div>
           <div>
-            <CardTitle className="text-2xl">Welcome to FWC</CardTitle>
+            <CardTitle className="text-2xl">FWC Worship Team</CardTitle>
             <CardDescription>
               {mode === 'signin' 
                 ? 'Sign in to your account' 

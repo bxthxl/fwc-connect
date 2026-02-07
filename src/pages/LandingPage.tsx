@@ -25,11 +25,11 @@ export default function LandingPage() {
             </div>
             <div className="space-y-4 max-w-2xl">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-                Family Worship Center
-                <span className="block text-primary">Worshippers</span>
+                FWC Worship Team
+                <span className="block text-primary">Platform</span>
               </h1>
               <p className="text-lg md:text-xl text-muted-foreground">
-                Manage your worship team with ease. Track attendance, view meetings, and stay connected.
+                Your worship team hub. Track attendance, view meetings, prepare songs, and stay connected.
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -67,7 +67,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="py-8 border-t">
         <div className="container text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} Family Worship Center. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} FWC Worship Team. All rights reserved.</p>
         </div>
       </footer>
     </div>
