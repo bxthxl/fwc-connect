@@ -10,6 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { OnboardingStep } from './OnboardingStep';
 import { useOnboardingContent, useMarkOnboardingSeen } from '@/hooks/useOnboarding';
+import { useAuth } from '@/contexts/AuthContext';
 import { Sparkles } from 'lucide-react';
 
 interface WelcomeDialogProps {
@@ -19,7 +20,8 @@ interface WelcomeDialogProps {
 
 export function WelcomeDialog({ open, onOpenChange }: WelcomeDialogProps) {
   const { data: content, isLoading } = useOnboardingContent();
-  const markSeen = useMarkOnboardingSeen();
+  const { refreshProfile } = useAuth();
+  const markSeen = useMarkOnboardingSeen(refreshProfile);
   const [step, setStep] = useState(0);
 
   if (isLoading || !content || content.length === 0) return null;

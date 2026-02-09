@@ -581,6 +581,7 @@ export type Database = {
       is_admin: { Args: { auth_uid: string }; Returns: boolean }
       is_attendance_taker: { Args: { auth_uid: string }; Returns: boolean }
       is_minutes_taker: { Args: { auth_uid: string }; Returns: boolean }
+      notify_birthdays: { Args: never; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "attendance_taker" | "minutes_taker"
@@ -596,7 +597,7 @@ export type Database = {
         | "conga_drums"
         | "flute"
         | "talking_drums"
-      notification_type: "announcement" | "weekly_song"
+      notification_type: "announcement" | "weekly_song" | "birthday"
       song_category: "praise_worship" | "friday_special" | "sunday_special"
       voice_group: "soprano" | "alto" | "tenor" | "bass" | "instrumentalist"
     }
@@ -740,7 +741,7 @@ export const Constants = {
         "flute",
         "talking_drums",
       ],
-      notification_type: ["announcement", "weekly_song"],
+      notification_type: ["announcement", "weekly_song", "birthday"],
       song_category: ["praise_worship", "friday_special", "sunday_special"],
       voice_group: ["soprano", "alto", "tenor", "bass", "instrumentalist"],
     },

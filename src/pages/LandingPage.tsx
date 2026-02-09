@@ -37,7 +37,7 @@ export default function LandingPage() {
                 <Link to="/auth">Sign In</Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="touch-target text-lg px-8">
-                <Link to="/auth">Join the Team</Link>
+                <Link to="/auth?mode=signup">Join the Team</Link>
               </Button>
             </div>
           </div>

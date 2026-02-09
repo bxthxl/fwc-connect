@@ -10,18 +10,19 @@ import fwcLogo from '@/assets/fwc-logo.png';
 
 interface EmailPasswordAuthFormProps {
   onAuthSuccess: () => void;
+  initialMode?: 'signin' | 'signup';
 }
 
 type AuthMode = 'signin' | 'signup' | 'forgot-password';
 
-export function EmailPasswordAuthForm({ onAuthSuccess }: EmailPasswordAuthFormProps) {
+export function EmailPasswordAuthForm({ onAuthSuccess, initialMode = 'signin' }: EmailPasswordAuthFormProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [mode, setMode] = useState<AuthMode>('signin');
+  const [mode, setMode] = useState<AuthMode>(initialMode);
   const [resetEmailSent, setResetEmailSent] = useState(false);
 
   const validateEmail = (email: string) => {

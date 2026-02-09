@@ -19,7 +19,7 @@ export default function DashboardPage() {
 
   // Check if user needs onboarding
   useEffect(() => {
-    if (profile && !(profile as any).has_seen_onboarding) {
+    if (profile && !profile.has_seen_onboarding) {
       setShowOnboarding(true);
     }
   }, [profile]);

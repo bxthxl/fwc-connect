@@ -1,1 +1,4 @@
 project_id = "ipbbhsjahjxnkzqxmqmd"
+
+[functions.check-birthdays]
+verify_jwt = false

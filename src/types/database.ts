@@ -36,6 +36,7 @@ export interface Profile {
   care_group_leader_name: string;
   care_group_leader_phone: string;
   avatar_url: string | null;
+  has_seen_onboarding: boolean;
   created_at: string;
   updated_at: string;
 }

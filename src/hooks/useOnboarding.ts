@@ -70,7 +70,7 @@ export function useUpdateOnboardingContent() {
   });
 }
 
-export function useMarkOnboardingSeen() {
+export function useMarkOnboardingSeen(onSuccess?: () => void) {
   const { profile } = useAuth();
   const queryClient = useQueryClient();
 
@@ -79,12 +79,13 @@ export function useMarkOnboardingSeen() {
       if (!profile) throw new Error('No profile');
       const { error } = await supabase
         .from('profiles')
-        .update({ has_seen_onboarding: true } as any)
+        .update({ has_seen_onboarding: true })
         .eq('id', profile.id);
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
+      onSuccess?.();
     },
   });
 }
