@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { EmailPasswordAuthForm } from '@/components/auth/EmailPasswordAuthForm';
 import { OnboardingForm } from '@/components/auth/OnboardingForm';
@@ -8,6 +8,9 @@ import { PageLoader } from '@/components/common/LoadingSpinner';
 export default function AuthPage() {
   const { user, profile, isLoading, isNewUser } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const modeParam = searchParams.get('mode');
+  const initialMode = modeParam === 'signup' ? 'signup' : 'signin';
 
   React.useEffect(() => {
     if (user && profile && !isNewUser) {
@@ -25,5 +28,5 @@ export default function AuthPage() {
   }
 
   // Show email/password auth form
-  return <EmailPasswordAuthForm onAuthSuccess={() => {}} />;
+  return <EmailPasswordAuthForm onAuthSuccess={() => {}} initialMode={initialMode} />;
 }
