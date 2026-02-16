@@ -1,103 +1,183 @@
 
+# Multi-Feature Implementation Plan
 
-# Fix Plan: Sign-Up Redirect, Onboarding Bug, and Birthday Notifications
-
-## Summary of Issues
-
-1. **"Join the Team" button goes to sign-in instead of sign-up** -- Both landing page buttons link to `/auth` which defaults to the sign-in form.
-2. **App Guide dialog pops up every visit** -- The `has_seen_onboarding` flag is updated in the database but the in-memory profile state in AuthContext is never refreshed, so the dialog keeps appearing until the user fully logs out and back in.
-3. **No birthday notifications exist** -- Currently, birthdays are only shown passively on the dashboard widget and Birthdays page. There is no notification triggered for birthdays. Adding this requires a new notification type and a daily check mechanism.
+This plan covers 8 feature areas: background watermark, events page, manual BGV selection, admin password reset, admin delete users, branch selection, church roles, and prompting existing users for new info.
 
 ---
 
-## Fix 1: "Join the Team" Redirects to Sign-Up
+## 1. Background Watermark on Pages
 
-**Problem:** Both "Sign In" and "Join the Team" buttons link to `/auth`, which defaults to the sign-in form.
-
-**Solution:** Pass a query parameter `?mode=signup` and have the auth form read it to set the initial form mode.
+Add the uploaded FWC hand/worship logo as a low-opacity background watermark on all dashboard pages.
 
 **Changes:**
-- `src/pages/LandingPage.tsx` -- Change "Join the Team" link from `/auth` to `/auth?mode=signup`
-- `src/components/auth/EmailPasswordAuthForm.tsx` -- Accept an optional `initialMode` prop and use it to set the default form mode
-- `src/pages/AuthPage.tsx` -- Read the `mode` query parameter from the URL and pass it to `EmailPasswordAuthForm`
+- Copy `user-uploads://WhatsApp_Image_2026-02-16_at_9.16.53_AM.jpeg` to `src/assets/fwc-watermark.png`
+- Update `DashboardLayout.tsx` to render the image as a fixed/absolute background element behind the main content area with ~5-8% opacity
+- The watermark will be centered and cover the content area subtly
 
 ---
 
-## Fix 2: App Guide Only Shows Once for New Users
+## 2. Events Page (New Feature)
 
-**Problem:** When the user finishes or skips the onboarding tour, `markSeen.mutate()` updates the database (`has_seen_onboarding = true`), but the profile object stored in AuthContext's `useState` is never refreshed. On every render, `!(profile as any).has_seen_onboarding` evaluates based on stale state, causing the dialog to reappear.
+Create a new "Events" system separate from meetings, where admins can set up upcoming events with details like dress code and assigned backup vocalists.
 
-**Solution (two parts):**
+**Database:**
+- New `events` table with columns: `id`, `title`, `description`, `event_date`, `start_time`, `end_time`, `location`, `dress_code`, `created_by`, `created_at`, `updated_at`
+- New `event_bgvs` junction table: `id`, `event_id`, `member_id` (links selected BGVs to an event)
+- RLS: All authenticated users can read events; admins can create/update/delete
 
-1. **Update the `Profile` TypeScript type** to include `has_seen_onboarding: boolean` so we don't need unsafe `as any` casts.
+**Frontend:**
+- New `src/pages/EventsPage.tsx` -- Member-facing page showing upcoming events with dress code and BGV list
+- New `src/pages/admin/EventsManagementPage.tsx` -- Admin page to create/edit/delete events, assign dress code, and pick BGVs (integrating BGV selector)
+- New hooks: `useEvents.ts`
+- Add routes in `App.tsx` and nav items in `DashboardLayout.tsx`
 
-2. **Call `refreshProfile()` after marking onboarding as seen** so the AuthContext state updates immediately. The `WelcomeDialog` will receive `refreshProfile` as a callback, and after `markSeen.mutate()` succeeds, it will call `refreshProfile()` to update the in-memory profile.
+---
+
+## 3. BGV Selector - Manual Picking Mode
+
+Upgrade the existing BGV Selector to support both random and manual selection modes.
+
+**Changes to `BGVSelectorPage.tsx`:**
+- Add a toggle/tab between "Random" and "Manual" selection modes
+- In "Manual" mode, display a searchable, filterable list of members with checkboxes
+- Admins can check/uncheck individual members to build the BGV list
+- The results card at the bottom works the same for both modes
+- This also integrates with the Events page (admin can pick BGVs when creating events)
+
+---
+
+## 4. Admin Password Reset for Users
+
+Allow admins to trigger a password reset email for any user from the Members page, and ensure users can also reset their own passwords (already partially implemented).
 
 **Changes:**
-- `src/types/database.ts` -- Add `has_seen_onboarding: boolean` to the `Profile` interface
-- `src/hooks/useOnboarding.ts` -- Accept and call a `refreshProfile` callback in `useMarkOnboardingSeen`, remove the `as any` cast
-- `src/components/onboarding/WelcomeDialog.tsx` -- Pass `refreshProfile` from AuthContext to the mark-seen hook
-- `src/pages/DashboardPage.tsx` -- Remove the `as any` cast, use typed access to `profile.has_seen_onboarding`
+- Add a "Reset Password" button in `MemberDetailsSheet.tsx` (visible to admins only)
+- Create an edge function `admin-reset-password` that uses the service role key to call `supabase.auth.admin.generateLink()` or send a reset email for the given user's email
+- The existing user-facing "Forgot Password" flow already works but the redirect URL points to `/auth` instead of a dedicated `/reset-password` page
+- Create a new `ResetPasswordPage.tsx` at `/reset-password` that detects the recovery token and lets users set a new password
+- Update the `redirectTo` in `EmailPasswordAuthForm.tsx` to point to `/reset-password`
 
 ---
 
-## Fix 3: Birthday Notifications (New Feature)
+## 5. Admin Delete Users
 
-**Current state:** Birthdays are displayed on the dashboard widget and the Birthdays page, but no notifications are sent. The notification system only supports `announcement` and `weekly_song` types.
+Allow admins to delete member profiles (and optionally their auth accounts).
 
-**Solution:** Add a `birthday` notification type and a database function that generates birthday notifications. Since there is no built-in cron/scheduler in the current setup, the approach will be a database function that can be called daily (via an edge function on a cron schedule) to check for today's birthdays and notify all members.
+**Changes:**
+- Add a "Delete Member" button with confirmation dialog in `MemberDetailsSheet.tsx`
+- Create an edge function `admin-delete-user` that:
+  1. Deletes the user's profile from `profiles` table
+  2. Deletes the user from `auth.users` using the admin API (service role)
+- The existing RLS policy already allows admins to delete profiles
 
-### Database Changes
-- Add `'birthday'` to the `notification_type` enum
-- Create a function `notify_birthdays()` that:
-  - Finds all profiles whose birthday month and day match today
-  - Inserts a notification for every other member (e.g., "Today is [Name]'s birthday!")
-  - Uses an idempotency check to avoid duplicate notifications on the same day
+---
 
-### Edge Function (Cron)
-- Create a `check-birthdays` edge function that calls the `notify_birthdays()` database function
-- This function will be invoked daily (can be called manually or set up with an external cron trigger)
+## 6. Branch Selection (Multi-Branch Support)
 
-### Changes Summary
-- **Database migration:** Add `birthday` to `notification_type` enum, create `notify_birthdays()` function
-- **New edge function:** `supabase/functions/check-birthdays/index.ts`
-- **NotificationBell component:** No changes needed -- it already renders all notification types generically
+Allow users to select which FWC branch they belong to. Data (meetings, events, announcements, etc.) is scoped to the user's branch.
+
+**Database:**
+- New `branches` table: `id`, `name`, `address`, `pastor_name`, `pastor_phone`, `created_at`
+- Seed all ~130 branches from the document into this table
+- Add `branch_id` column (nullable, UUID, FK to branches) to `profiles` table
+- Add `branch_id` column to `meetings`, `events`, `announcements`, `songs`, `weekly_songs` tables
+- Update RLS policies on these tables to filter by the user's branch (using a helper function `get_user_branch_id(auth_uid)`)
+
+**Frontend:**
+- Add branch selection to the OnboardingForm (Step 1 or as a new step)
+- Add branch selection to ProfileEditForm
+- Update data-fetching hooks to include `branch_id` filter based on the logged-in user's branch
+- Admin can see all branches or filter by branch
+- Add a "Branch" display in the profile view and member details sheet
+
+---
+
+## 7. Church Roles (Ministry Roles)
+
+Add ministry/church roles that members select during registration. These are descriptive labels (not permission-based like admin/attendance_taker).
+
+**Database:**
+- New `church_roles` table: `id`, `name`, `created_at` (seeded with: Protectionist, Worship Leader, Wardrobe Team, EDC Team, Music Development, Team Secretariat, Pastor, Deacon, Branch Lead, Prayer Team)
+- New `member_church_roles` junction table: `id`, `profile_id` (FK to profiles), `church_role_id` (FK to church_roles), `created_at`
+- RLS: Authenticated users can read all; users can manage their own; admins can manage any
+
+**Frontend:**
+- Add church role multi-select to the OnboardingForm (Step 2, alongside voice group)
+- Display church roles on profile view, member details sheet, and member cards
+- Admins can add/edit church roles for any member
+- Add an admin settings page to manage the list of available church roles
+
+---
+
+## 8. Prompt Existing Users for New Required Info
+
+When new required fields are added (branch, church roles), existing users who haven't filled them in should be prompted on their next login.
+
+**Changes:**
+- Update `AuthContext` to check if the profile is missing required fields (`branch_id`, church roles)
+- Create a `ProfileCompletionDialog` component that appears when a logged-in user has missing required data
+- This dialog shows only the missing fields (branch selector, church role picker) and saves them
+- Shown once per session until the user completes the fields; blocks access to the dashboard until filled
 
 ---
 
 ## Technical Details
 
-### File Changes
+### Database Migrations (in order)
 
-| File | Action | Description |
-|------|--------|-------------|
-| `src/pages/LandingPage.tsx` | Modify | Change "Join the Team" link to `/auth?mode=signup` |
-| `src/pages/AuthPage.tsx` | Modify | Read `mode` query param, pass `initialMode` to auth form |
-| `src/components/auth/EmailPasswordAuthForm.tsx` | Modify | Accept `initialMode` prop, use it for default mode state |
-| `src/types/database.ts` | Modify | Add `has_seen_onboarding` to `Profile` interface |
-| `src/hooks/useOnboarding.ts` | Modify | Accept `refreshProfile` callback, remove `as any` cast |
-| `src/components/onboarding/WelcomeDialog.tsx` | Modify | Pass `refreshProfile` to mark-seen hook |
-| `src/pages/DashboardPage.tsx` | Modify | Remove `as any` cast |
-| `supabase/functions/check-birthdays/index.ts` | Create | Edge function to trigger daily birthday notifications |
-| Database migration | Create | Add `birthday` enum value and `notify_birthdays()` function |
+1. Create `branches` table and seed ~130 branches
+2. Create `church_roles` table and seed initial roles
+3. Create `member_church_roles` junction table with RLS
+4. Add `branch_id` to `profiles` (nullable, FK to branches)
+5. Add `branch_id` to `meetings`, `announcements`, `events` tables
+6. Create `events` and `event_bgvs` tables with RLS
+7. Create helper function `get_user_branch_id(auth_uid)`
+8. Update RLS policies to scope data by branch
 
-### Birthday Notification Flow
+### New Edge Functions
 
-```text
-Daily Trigger (Edge Function)
-       |
-       v
-  call notify_birthdays()
-       |
-       v
-  Find profiles where birth month/day = today
-       |
-       v
-  For each birthday person:
-    Insert notification for ALL other members
-    Title: "Happy Birthday [Name]!"
-       |
-       v
-  Members see birthday notifications in the bell icon
-```
+| Function | Purpose |
+|----------|---------|
+| `admin-reset-password` | Send password reset email for a user (admin only) |
+| `admin-delete-user` | Delete a user's auth account and profile (admin only) |
 
+### New Pages and Routes
+
+| Route | Page | Access |
+|-------|------|--------|
+| `/events` | EventsPage | All members |
+| `/admin/events` | EventsManagementPage | Admin |
+| `/reset-password` | ResetPasswordPage | Public |
+
+### Modified Files Summary
+
+| File | Changes |
+|------|---------|
+| `src/components/layout/DashboardLayout.tsx` | Add watermark background, new nav items (Events) |
+| `src/pages/admin/BGVSelectorPage.tsx` | Add manual selection mode with checkboxes |
+| `src/components/admin/MemberDetailsSheet.tsx` | Add reset password button, delete member button |
+| `src/components/auth/OnboardingForm.tsx` | Add branch selector and church role multi-select |
+| `src/components/auth/EmailPasswordAuthForm.tsx` | Fix reset redirect URL |
+| `src/pages/AuthPage.tsx` | Handle recovery token redirect |
+| `src/types/database.ts` | Add new types (Event, Branch, ChurchRole, etc.) |
+| `src/contexts/AuthContext.tsx` | Check for incomplete profile fields |
+| `src/App.tsx` | Add new routes |
+| `src/components/profile/ProfileView.tsx` | Show branch and church roles |
+| `src/components/profile/ProfileEditForm.tsx` | Add branch and church role editing |
+
+### New Files
+
+| File | Purpose |
+|------|---------|
+| `src/assets/fwc-watermark.png` | Watermark image |
+| `src/pages/EventsPage.tsx` | Member-facing events list |
+| `src/pages/admin/EventsManagementPage.tsx` | Admin event management |
+| `src/pages/ResetPasswordPage.tsx` | Password reset form |
+| `src/hooks/useEvents.ts` | Events data hooks |
+| `src/hooks/useBranches.ts` | Branch data hooks |
+| `src/hooks/useChurchRoles.ts` | Church role hooks |
+| `src/components/common/ProfileCompletionDialog.tsx` | Prompt for missing fields |
+| `src/components/events/EventCard.tsx` | Event display card |
+| `src/components/events/EventForm.tsx` | Admin event creation form |
+| `supabase/functions/admin-reset-password/index.ts` | Admin password reset |
+| `supabase/functions/admin-delete-user/index.ts` | Admin user deletion |
