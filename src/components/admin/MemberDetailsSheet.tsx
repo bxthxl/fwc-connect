@@ -8,11 +8,12 @@ import {
   SheetDescription,
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { VoiceGroupBadge } from '@/components/common/VoiceGroupBadge';
 import { InstrumentBadge } from '@/components/common/InstrumentBadge';
 import { RoleSelector } from '@/components/admin/RoleSelector';
-import { User, Phone, Mail, MapPin, Calendar, Users, KeyRound, Trash2, Loader2, Building2 } from 'lucide-react';
+import { User, Phone, Mail, MapPin, Calendar, Users, KeyRound, Trash2, Loader2, Building2, Lock } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -45,6 +46,9 @@ export function MemberDetailsSheet({
   const { data: allMemberChurchRoles } = useAllMemberChurchRoles();
   const [isResetting, setIsResetting] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isSettingPassword, setIsSettingPassword] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [showSetPasswordDialog, setShowSetPasswordDialog] = useState(false);
 
   if (!member) return null;
 
@@ -55,6 +59,37 @@ export function MemberDetailsSheet({
   const memberChurchRoleNames = (churchRoles || [])
     .filter(cr => memberChurchRoleIds.includes(cr.id))
     .map(cr => cr.name);
+
+  const handleSetPassword = async () => {
+    if (newPassword.length < 6) {
+      toast({ title: 'Password too short', description: 'Password must be at least 6 characters', variant: 'destructive' });
+      return;
+    }
+    setIsSettingPassword(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const resp = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-set-password`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session?.access_token}`,
+          },
+          body: JSON.stringify({ auth_user_id: member.auth_user_id, password: newPassword }),
+        }
+      );
+      const result = await resp.json();
+      if (!resp.ok) throw new Error(result.error);
+      toast({ title: 'Password updated', description: `New password has been set for ${member.full_name}. Please share it with them directly.` });
+      setNewPassword('');
+      setShowSetPasswordDialog(false);
+    } catch (error: any) {
+      toast({ title: 'Failed to set password', description: error.message, variant: 'destructive' });
+    } finally {
+      setIsSettingPassword(false);
+    }
+  };
 
   const handleResetPassword = async () => {
     setIsResetting(true);
@@ -195,10 +230,48 @@ export function MemberDetailsSheet({
           {/* Admin Actions */}
           <div className="border-t pt-4 space-y-2">
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">Admin Actions</h3>
-            <Button variant="outline" className="w-full justify-start" onClick={handleResetPassword} disabled={isResetting}>
+            
+            {/* Set New Password - Primary */}
+            <AlertDialog open={showSetPasswordDialog} onOpenChange={(open) => { setShowSetPasswordDialog(open); if (!open) setNewPassword(''); }}>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline" className="w-full justify-start">
+                  <Lock className="h-4 w-4 mr-2" />
+                  Set New Password
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Set New Password</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Enter a temporary password for {member.full_name}. You'll need to share this password with them directly.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="py-4">
+                  <Input
+                    type="text"
+                    placeholder="Enter temporary password (min 6 characters)"
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    minLength={6}
+                  />
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleSetPassword} disabled={isSettingPassword || newPassword.length < 6}>
+                    {isSettingPassword ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
+                    Set Password
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
+            {/* Email Reset - Secondary */}
+            <Button variant="ghost" size="sm" className="w-full justify-start text-muted-foreground" onClick={handleResetPassword} disabled={isResetting}>
               {isResetting ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <KeyRound className="h-4 w-4 mr-2" />}
-              Reset Password
+              Send Reset Email (fallback)
             </Button>
+
+            {/* Delete */}
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button variant="outline" className="w-full justify-start text-destructive hover:text-destructive" disabled={isDeleting}>
