@@ -1,33 +1,42 @@
 
-# Develop Wuye Settings Page (Branch Info Dashboard)
 
-Transform the placeholder Wuye Settings page into a functional admin page that displays the branch's details and member stats.
+# Admin Direct Password Reset
 
-## What You'll See
+Instead of relying on email reset links (which point to the Lovable preview URL and don't work reliably), add the ability for admins to set a new password directly for any member.
 
-The page will show:
-- **Branch Info Card**: Name, address, pastor name, and pastor phone for FWC Wuye
-- **Members Card**: Count of members registered to the Wuye branch, with a link to the Members page (filtered)
-- **Quick Stats**: Number of upcoming meetings/events for the branch
+## What Changes
+
+### 1. New Edge Function: `admin-set-password`
+- Accepts a user ID and a new password from an authenticated admin
+- Uses the service role to call `auth.admin.updateUserById()` to set the password directly
+- Validates that the caller is an admin before proceeding
+- No email link needed -- the admin tells the member their new temporary password
+
+### 2. Updated Member Details Sheet (`src/components/admin/MemberDetailsSheet.tsx`)
+- Replace the current "Reset Password" button (which sends an unreliable email) with a "Set New Password" dialog
+- The dialog has a password input field where the admin types a temporary password
+- On submit, it calls the new edge function to set the password immediately
+- Admin can then tell the member their new password directly (in person, phone, etc.)
+
+### 3. Edge Function Config
+- Add `admin-set-password` to `supabase/config.toml` with `verify_jwt = false` (JWT validated in code)
+
+## How It Works
+1. Admin opens a member's details in the Members page
+2. Clicks "Set New Password" under Admin Actions
+3. Types a temporary password (minimum 6 characters)
+4. Clicks confirm -- password is updated immediately
+5. Admin tells the member their new password
+6. Member can then change it themselves from their profile page
 
 ## Technical Details
 
-### Changes to `src/pages/admin/WuyeSettingsPage.tsx`
-- Fetch the Wuye branch record from `branches` table (by name or the admin's own `branch_id` from their profile)
-- Display branch details (address, pastor name, pastor phone) in a read-only info card
-- Show member count for the branch (query `profiles` where `branch_id` matches)
-- Allow admin to edit branch details (address, pastor name, pastor phone) inline with a save button
-- Add a card showing upcoming meetings/events count for the branch
+### Edge Function (`supabase/functions/admin-set-password/index.ts`)
+- Validates admin role via the existing `is_admin` RPC
+- Calls `adminClient.auth.admin.updateUserById(userId, { password })` using the service role key
+- Returns success/error response with CORS headers
 
-### Data Fetching
-- Use existing `useBranches` hook to get branch info
-- Use `useAuth` to get the admin's `branch_id` from their profile
-- Add a small query in the component (or a new hook) to count members in the branch
-- Use existing `useMeetings` and `useEvents` hooks for upcoming counts
-
-### Layout
-- Header with branch name and MapPin icon (existing)
-- Two-column grid on desktop:
-  - Left: Branch details card (editable fields for address, pastor name, phone)
-  - Right: Stats cards (member count, upcoming meetings, upcoming events)
-- Save button to update branch info via `supabase.from('branches').update(...)`
+### UI Changes (`MemberDetailsSheet.tsx`)
+- Add an `AlertDialog` with a password input field
+- Wire it to call the new edge function
+- Keep the existing "Reset Password" (email) button as a secondary option, but make the new "Set Password" the primary action
