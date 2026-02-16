@@ -179,7 +179,7 @@ export function EmailPasswordAuthForm({ onAuthSuccess, initialMode = 'signin' }:
       const { error } = await supabase.auth.resetPasswordForEmail(
         email.trim().toLowerCase(),
         {
-          redirectTo: `${window.location.origin}/auth`,
+          redirectTo: `${window.location.origin}/reset-password`,
         }
       );
 
