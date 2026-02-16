@@ -4,8 +4,10 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useAuth } from '@/contexts/AuthContext';
 import { useBranches } from '@/hooks/useBranches';
+import { useChurchRoles, useSetMemberChurchRoles } from '@/hooks/useChurchRoles';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
@@ -13,9 +15,12 @@ import { Loader2 } from 'lucide-react';
 export function ProfileCompletionDialog() {
   const { profile, refreshProfile } = useAuth();
   const { data: branches } = useBranches();
+  const { data: churchRoles } = useChurchRoles();
+  const setMemberChurchRoles = useSetMemberChurchRoles();
 
   const [open, setOpen] = useState(false);
   const [branchId, setBranchId] = useState('');
+  const [selectedChurchRoles, setSelectedChurchRoles] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const needsBranch = profile && !profile.branch_id;
@@ -39,6 +44,10 @@ export function ProfileCompletionDialog() {
         .update({ branch_id: branchId })
         .eq('id', profile!.id);
       if (error) throw error;
+
+      if (selectedChurchRoles.length > 0) {
+        await setMemberChurchRoles.mutateAsync({ profileId: profile!.id, roleIds: selectedChurchRoles });
+      }
 
       await refreshProfile();
       setOpen(false);
@@ -77,6 +86,28 @@ export function ProfileCompletionDialog() {
                 </ScrollArea>
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Church Roles (Optional)</Label>
+            <p className="text-xs text-muted-foreground">Select any roles that apply, or skip if you're just a choir member.</p>
+            <ScrollArea className="h-40 border rounded-md p-3">
+              <div className="space-y-2">
+                {(churchRoles || []).map(role => (
+                  <label key={role.id} className="flex items-center gap-2 cursor-pointer">
+                    <Checkbox
+                      checked={selectedChurchRoles.includes(role.id)}
+                      onCheckedChange={(checked) => {
+                        setSelectedChurchRoles(prev =>
+                          checked ? [...prev, role.id] : prev.filter(id => id !== role.id)
+                        );
+                      }}
+                    />
+                    <span className="text-sm">{role.name}</span>
+                  </label>
+                ))}
+              </div>
+            </ScrollArea>
           </div>
 
           <Button onClick={handleSave} className="w-full" disabled={isLoading}>
