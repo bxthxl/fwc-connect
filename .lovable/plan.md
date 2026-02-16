@@ -1,42 +1,35 @@
 
 
-# Admin Direct Password Reset
+# Fix User Deletion (Foreign Key + Auth Issues)
 
-Instead of relying on email reset links (which point to the Lovable preview URL and don't work reliably), add the ability for admins to set a new password directly for any member.
+The deletion is failing for two reasons:
 
-## What Changes
+1. **Foreign key constraint**: The profile has related records in `notifications`, `member_church_roles`, and potentially other tables. The edge function tries to delete the profile without cleaning up these related records first, causing a database error.
 
-### 1. New Edge Function: `admin-set-password`
-- Accepts a user ID and a new password from an authenticated admin
-- Uses the service role to call `auth.admin.updateUserById()` to set the password directly
-- Validates that the caller is an admin before proceeding
-- No email link needed -- the admin tells the member their new temporary password
+2. **Broken auth check**: The edge function uses `supabase.auth.getClaims()` which isn't a standard Supabase JS v2 method. This likely fails with an "Unauthorized" error before even reaching the deletion logic.
 
-### 2. Updated Member Details Sheet (`src/components/admin/MemberDetailsSheet.tsx`)
-- Replace the current "Reset Password" button (which sends an unreliable email) with a "Set New Password" dialog
-- The dialog has a password input field where the admin types a temporary password
-- On submit, it calls the new edge function to set the password immediately
-- Admin can then tell the member their new password directly (in person, phone, etc.)
+## What Will Change
 
-### 3. Edge Function Config
-- Add `admin-set-password` to `supabase/config.toml` with `verify_jwt = false` (JWT validated in code)
+### Fix the Edge Function (`supabase/functions/admin-delete-user/index.ts`)
+- Replace `getClaims()` with `supabase.auth.getUser()` to properly identify the calling admin
+- Before deleting the profile, delete all related records from:
+  - `notifications` (where `user_id` = profile id)
+  - `member_church_roles` (where `profile_id` = profile id)
+  - `user_roles` (where `user_id` = profile id)
+  - `attendance` (where `user_id` = profile id)
+  - `event_bgvs` (where `member_id` = profile id)
+  - `discussion_topics` / `discussion_replies` (where `created_by` = profile id)
+- Then delete the profile, then delete the auth user
 
-## How It Works
-1. Admin opens a member's details in the Members page
-2. Clicks "Set New Password" under Admin Actions
-3. Types a temporary password (minimum 6 characters)
-4. Clicks confirm -- password is updated immediately
-5. Admin tells the member their new password
-6. Member can then change it themselves from their profile page
+### Technical Detail
+- Uses the service role admin client for all deletions (bypasses RLS)
+- First looks up the profile `id` from the `auth_user_id`, then cascades through all related tables
+- Auth validation switches to `getUser()` which is the standard and reliable method
 
-## Technical Details
+## Note About Duplicate Profiles
+There are actually two profiles for this person in the database:
+- "INYANG MICHAE;L ANI" (with a semicolon typo) -- email: inyang.ani@mintnigeria.com
+- "INYANG MICHAEL ANI" -- email: ud4ani@gmail.com
 
-### Edge Function (`supabase/functions/admin-set-password/index.ts`)
-- Validates admin role via the existing `is_admin` RPC
-- Calls `adminClient.auth.admin.updateUserById(userId, { password })` using the service role key
-- Returns success/error response with CORS headers
+You may want to delete the duplicate (the one with the typo) after this fix is deployed.
 
-### UI Changes (`MemberDetailsSheet.tsx`)
-- Add an `AlertDialog` with a password input field
-- Wire it to call the new edge function
-- Keep the existing "Reset Password" (email) button as a secondary option, but make the new "Set Password" the primary action
