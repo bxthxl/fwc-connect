@@ -2,3 +2,9 @@ project_id = "ipbbhsjahjxnkzqxmqmd"
 
 [functions.check-birthdays]
 verify_jwt = false
+
+[functions.admin-reset-password]
+verify_jwt = false
+
+[functions.admin-delete-user]
+verify_jwt = false

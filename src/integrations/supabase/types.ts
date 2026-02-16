@@ -17,6 +17,7 @@ export type Database = {
       announcements: {
         Row: {
           body: string
+          branch_id: string | null
           created_at: string
           created_by: string | null
           id: string
@@ -27,6 +28,7 @@ export type Database = {
         }
         Insert: {
           body: string
+          branch_id?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
@@ -37,6 +39,7 @@ export type Database = {
         }
         Update: {
           body?: string
+          branch_id?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
@@ -46,6 +49,13 @@ export type Database = {
           visible_to?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "announcements_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "announcements_created_by_fkey"
             columns: ["created_by"]
@@ -109,6 +119,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      branches: {
+        Row: {
+          address: string | null
+          created_at: string
+          id: string
+          name: string
+          pastor_name: string | null
+          pastor_phone: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          pastor_name?: string | null
+          pastor_phone?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          pastor_name?: string | null
+          pastor_phone?: string | null
+        }
+        Relationships: []
+      }
+      church_roles: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
       }
       discussion_replies: {
         Row: {
@@ -193,8 +248,105 @@ export type Database = {
           },
         ]
       }
+      event_bgvs: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          member_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          member_id: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          member_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_bgvs_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "event_bgvs_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          branch_id: string | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          dress_code: string | null
+          end_time: string | null
+          event_date: string
+          id: string
+          location: string
+          start_time: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          branch_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          dress_code?: string | null
+          end_time?: string | null
+          event_date: string
+          id?: string
+          location: string
+          start_time: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          branch_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          dress_code?: string | null
+          end_time?: string | null
+          event_date?: string
+          id?: string
+          location?: string
+          start_time?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       meetings: {
         Row: {
+          branch_id: string | null
           created_at: string
           created_by: string | null
           description: string | null
@@ -206,6 +358,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          branch_id?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -217,6 +370,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          branch_id?: string | null
           created_at?: string
           created_by?: string | null
           description?: string | null
@@ -229,8 +383,51 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "meetings_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "meetings_created_by_fkey"
             columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      member_church_roles: {
+        Row: {
+          church_role_id: string
+          created_at: string
+          id: string
+          profile_id: string
+        }
+        Insert: {
+          church_role_id: string
+          created_at?: string
+          id?: string
+          profile_id: string
+        }
+        Update: {
+          church_role_id?: string
+          created_at?: string
+          id?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "member_church_roles_church_role_id_fkey"
+            columns: ["church_role_id"]
+            isOneToOne: false
+            referencedRelation: "church_roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "member_church_roles_profile_id_fkey"
+            columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
@@ -372,6 +569,7 @@ export type Database = {
           auth_user_id: string
           avatar_url: string | null
           birthday: string
+          branch_id: string | null
           care_group_leader_name: string
           care_group_leader_phone: string
           created_at: string
@@ -395,6 +593,7 @@ export type Database = {
           auth_user_id: string
           avatar_url?: string | null
           birthday: string
+          branch_id?: string | null
           care_group_leader_name: string
           care_group_leader_phone: string
           created_at?: string
@@ -418,6 +617,7 @@ export type Database = {
           auth_user_id?: string
           avatar_url?: string | null
           birthday?: string
+          branch_id?: string | null
           care_group_leader_name?: string
           care_group_leader_phone?: string
           created_at?: string
@@ -437,7 +637,15 @@ export type Database = {
           voice_group?: Database["public"]["Enums"]["voice_group"]
           year_joined?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_branch_id_fkey"
+            columns: ["branch_id"]
+            isOneToOne: false
+            referencedRelation: "branches"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       songs: {
         Row: {
@@ -571,6 +779,7 @@ export type Database = {
       can_manage_minutes: { Args: { auth_uid: string }; Returns: boolean }
       can_take_attendance: { Args: { auth_uid: string }; Returns: boolean }
       get_profile_id: { Args: { auth_uid: string }; Returns: string }
+      get_user_branch_id: { Args: { auth_uid: string }; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

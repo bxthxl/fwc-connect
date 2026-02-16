@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import {
   Home,
   Calendar,
+  CalendarDays,
   FileText,
   User,
   Users,
@@ -36,7 +37,9 @@ import {
   HelpCircle,
 } from 'lucide-react';
 import fwcLogo from '@/assets/fwc-logo.png';
+import fwcWatermark from '@/assets/fwc-watermark.png';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
+import { ProfileCompletionDialog } from '@/components/common/ProfileCompletionDialog';
 
 interface NavItem {
   label: string;
@@ -50,6 +53,7 @@ interface NavItem {
 const memberNavItems: NavItem[] = [
   { label: 'Home', href: '/dashboard', icon: Home },
   { label: 'Meetings', href: '/meetings', icon: Calendar },
+  { label: 'Events', href: '/events', icon: CalendarDays },
   { label: 'Songs', href: '/songs', icon: Music },
   { label: 'Minutes', href: '/minutes', icon: FileText },
   { label: 'Birthdays', href: '/birthdays', icon: Cake },
@@ -61,6 +65,7 @@ const adminNavItems: NavItem[] = [
   { label: 'Overview', href: '/admin', icon: Shield, adminOnly: true },
   { label: 'Members', href: '/admin/members', icon: Users, adminOnly: true },
   { label: 'Meetings', href: '/admin/meetings', icon: Calendar, adminOnly: true },
+  { label: 'Events', href: '/admin/events', icon: CalendarDays, adminOnly: true },
   { label: 'Attendance', href: '/admin/attendance', icon: ClipboardCheck, attendanceOnly: true },
   { label: 'Minutes', href: '/admin/minutes', icon: PenTool, minutesOnly: true },
   { label: 'Songs', href: '/admin/songs', icon: Music, adminOnly: true },
@@ -105,7 +110,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   const NavLinks = ({ onNavigate }: { onNavigate?: () => void }) => (
     <nav className="space-y-1">
-      {/* Member Navigation */}
       <div className="px-3 py-2">
         <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Member</h3>
       </div>
@@ -129,7 +133,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         );
       })}
 
-      {/* Admin Navigation */}
       {showAdminSection && (
         <>
           <div className="px-3 py-2 pt-4">
@@ -163,10 +166,10 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <div className="min-h-screen bg-background">
+      <ProfileCompletionDialog />
       {/* Header */}
       <header className="sticky top-0 z-50 w-full border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/60">
         <div className="container flex h-14 items-center justify-between">
-          {/* Mobile menu trigger */}
           <div className="flex items-center gap-2">
             <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
               <SheetTrigger asChild className="md:hidden">
@@ -183,14 +186,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               </SheetContent>
             </Sheet>
 
-            {/* Logo */}
             <Link to="/dashboard" className="flex items-center gap-2">
               <img src={fwcLogo} alt="FWC" className="h-8 w-8" />
               <span className="font-semibold hidden sm:inline">FWC Worship Team</span>
             </Link>
           </div>
 
-          {/* User menu */}
           <div className="flex items-center gap-1">
             <NotificationBell />
             <DropdownMenu>
@@ -214,7 +215,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
+                <DropdownMenuItem asChild>
                   <Link to="/profile" className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
                     Profile
@@ -239,16 +240,21 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       </header>
 
       <div className="flex">
-        {/* Desktop Sidebar */}
         <aside className="hidden md:flex w-64 flex-col border-r bg-card min-h-[calc(100vh-3.5rem)] sticky top-14">
           <div className="flex-1 overflow-y-auto py-4 px-3">
             <NavLinks />
           </div>
         </aside>
 
-        {/* Main content */}
-        <main className="flex-1 min-h-[calc(100vh-3.5rem)]">
-          <div className="container py-6">{children}</div>
+        <main className="flex-1 min-h-[calc(100vh-3.5rem)] relative">
+          {/* Watermark */}
+          <div
+            className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-[0.06]"
+            aria-hidden="true"
+          >
+            <img src={fwcWatermark} alt="" className="w-[400px] h-[400px] object-contain" />
+          </div>
+          <div className="container py-6 relative z-10">{children}</div>
         </main>
       </div>
     </div>
