@@ -414,16 +414,6 @@ export function EmailPasswordAuthForm({ onAuthSuccess, initialMode = 'signin' }:
               )}
             </Button>
 
-            {mode === 'signin' && (
-              <Button 
-                type="button"
-                variant="link" 
-                className="w-full text-sm"
-                onClick={() => setMode('forgot-password')}
-              >
-                Forgot your password?
-              </Button>
-            )}
           </form>
 
           <div className="mt-6 text-center">
