@@ -1,35 +1,39 @@
 
 
-# Fix User Deletion (Foreign Key + Auth Issues)
+# Fix User Deletion -- Handle ALL Foreign Key References
 
-The deletion is failing for two reasons:
+The deletion is still failing because the `songs` table (and several others) reference the profile and don't have CASCADE/SET NULL configured. The current edge function cleans up some related tables but misses others.
 
-1. **Foreign key constraint**: The profile has related records in `notifications`, `member_church_roles`, and potentially other tables. The edge function tries to delete the profile without cleaning up these related records first, causing a database error.
+## Root Cause
 
-2. **Broken auth check**: The edge function uses `supabase.auth.getClaims()` which isn't a standard Supabase JS v2 method. This likely fails with an "Unauthorized" error before even reaching the deletion logic.
+The error is: `songs_created_by_fkey` blocks profile deletion. The edge function needs to handle **all** tables that reference `profiles` without CASCADE or SET NULL.
+
+## Tables That Need Handling
+
+Tables already cleaned up (working):
+- `notifications` (CASCADE -- auto-handled, but also manually deleted)
+- `member_church_roles` (CASCADE)
+- `user_roles` (CASCADE)
+- `attendance` (CASCADE for user_id, SET NULL for marked_by)
+- `event_bgvs` (CASCADE)
+- `discussion_replies` (NO ACTION -- manually deleted)
+- `discussion_topics` (NO ACTION -- manually deleted)
+
+Tables **missing** from the cleanup (causing the failure):
+- `songs` (created_by -- NO ACTION)
+- `weekly_songs` (assigned_by -- NO ACTION)
+- `onboarding_content` (updated_by -- NO ACTION)
+- `events` (created_by -- NO ACTION)
 
 ## What Will Change
 
-### Fix the Edge Function (`supabase/functions/admin-delete-user/index.ts`)
-- Replace `getClaims()` with `supabase.auth.getUser()` to properly identify the calling admin
-- Before deleting the profile, delete all related records from:
-  - `notifications` (where `user_id` = profile id)
-  - `member_church_roles` (where `profile_id` = profile id)
-  - `user_roles` (where `user_id` = profile id)
-  - `attendance` (where `user_id` = profile id)
-  - `event_bgvs` (where `member_id` = profile id)
-  - `discussion_topics` / `discussion_replies` (where `created_by` = profile id)
-- Then delete the profile, then delete the auth user
+### Update Edge Function (`supabase/functions/admin-delete-user/index.ts`)
 
-### Technical Detail
-- Uses the service role admin client for all deletions (bypasses RLS)
-- First looks up the profile `id` from the `auth_user_id`, then cascades through all related tables
-- Auth validation switches to `getUser()` which is the standard and reliable method
+Add cleanup for the missing tables before deleting the profile. For content tables like songs and events, we'll SET the reference to NULL rather than delete the records (since deleting a member shouldn't remove songs or events they created):
 
-## Note About Duplicate Profiles
-There are actually two profiles for this person in the database:
-- "INYANG MICHAE;L ANI" (with a semicolon typo) -- email: inyang.ani@mintnigeria.com
-- "INYANG MICHAEL ANI" -- email: ud4ani@gmail.com
+- `songs`: set `created_by` to NULL where it matches the profile id
+- `weekly_songs`: set `assigned_by` to NULL where it matches the profile id
+- `onboarding_content`: set `updated_by` to NULL where it matches the profile id
+- `events`: set `created_by` to NULL where it matches the profile id
 
-You may want to delete the duplicate (the one with the typo) after this fix is deployed.
-
+This preserves the data (songs, events stay intact) while removing the reference to the deleted member.
