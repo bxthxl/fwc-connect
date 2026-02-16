@@ -63,6 +63,23 @@ Deno.serve(async (req) => {
     if (profile) {
       const profileId = profile.id;
 
+      // Nullify references in content tables (preserve the data)
+      const nullifyRefs = [
+        adminClient.from('songs').update({ created_by: null }).eq('created_by', profileId),
+        adminClient.from('weekly_songs').update({ assigned_by: null }).eq('assigned_by', profileId),
+        adminClient.from('onboarding_content').update({ updated_by: null }).eq('updated_by', profileId),
+        adminClient.from('events').update({ created_by: null }).eq('created_by', profileId),
+        adminClient.from('meetings').update({ created_by: null }).eq('created_by', profileId),
+        adminClient.from('minutes').update({ created_by: null }).eq('created_by', profileId),
+        adminClient.from('announcements').update({ created_by: null }).eq('created_by', profileId),
+        adminClient.from('attendance').update({ marked_by: null }).eq('marked_by', profileId),
+      ];
+
+      const nullResults = await Promise.all(nullifyRefs);
+      for (const r of nullResults) {
+        if (r.error) console.error('Nullify reference error:', r.error);
+      }
+
       // Delete all related records before deleting the profile
       const relatedDeletes = [
         adminClient.from('notifications').delete().eq('user_id', profileId),
