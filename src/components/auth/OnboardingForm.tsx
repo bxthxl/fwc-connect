@@ -82,10 +82,7 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
       toast({ title: 'Error', description: 'You must be signed in.', variant: 'destructive' });
       return;
     }
-    if (selectedChurchRoles.length === 0) {
-      toast({ title: 'Church Roles Required', description: 'Please select at least one church role.', variant: 'destructive' });
-      return;
-    }
+    // Church roles are optional - choir members can skip
 
     setIsLoading(true);
     try {
@@ -313,8 +310,8 @@ export function OnboardingForm({ onComplete }: OnboardingFormProps) {
               {step === 3 && (
                 <>
                   <div className="space-y-2">
-                    <Label className="text-sm font-medium">Church Roles *</Label>
-                    <p className="text-xs text-muted-foreground">Select all roles that apply to you.</p>
+                     <Label className="text-sm font-medium">Church Roles (Optional)</Label>
+                     <p className="text-xs text-muted-foreground">Select any roles that apply, or skip if you're just a choir member.</p>
                     <div className="border rounded-md p-3 space-y-2 max-h-56 overflow-y-auto">
                       {(churchRoles || []).map(role => (
                         <label key={role.id} className="flex items-center gap-2 cursor-pointer hover:bg-muted rounded p-1.5">
