@@ -1,23 +1,20 @@
 
 
-# Make Church Roles Optional
+# Add Optional Church Roles to Profile Completion Dialog
 
-Church roles are currently required in two places. This change makes them optional so plain choir members can skip them.
+When existing users are prompted to complete their profile (currently only for branch selection), add an optional church roles picker so they can choose roles if they want -- or simply skip and continue.
 
 ## Changes
 
-### 1. Onboarding Form (`src/components/auth/OnboardingForm.tsx`)
-- Remove the validation check on lines 85-88 that blocks submission when no church roles are selected
-- Update the Step 3 label from "Church Roles *" to "Church Roles (Optional)"
-- Update the helper text to say "Select any roles that apply, or skip if you're just a choir member."
-- Allow the form to submit with zero church roles selected
+### ProfileCompletionDialog (`src/components/common/ProfileCompletionDialog.tsx`)
+- Import `useChurchRoles` and `useSetMemberChurchRoles` hooks, plus the `Checkbox` component
+- Add state for `selectedChurchRoles` (string array, defaults to empty)
+- After the branch selector, add a "Church Roles (Optional)" section with checkboxes listing all available roles
+- The save button works regardless of whether any roles are selected -- branch is still required, roles are not
+- On save, if any roles were selected, call `setMemberChurchRoles` after updating the branch
 
-### 2. Profile Completion Dialog (`src/components/common/ProfileCompletionDialog.tsx`)
-- Remove `needsChurchRoles` from the logic entirely -- existing users should NOT be prompted for church roles since they're optional
-- Remove the church roles section from the dialog (lines 105-121)
-- Remove the validation on lines 45-48 that blocks saving without church roles
-- The dialog will now only appear if the user is missing their branch selection
-
-### 3. Minor Cleanup
-- Remove unused `useChurchRoles` / `useMemberChurchRoles` imports from `ProfileCompletionDialog.tsx` if church roles section is fully removed from it
+### Technical Detail
+- No database or schema changes needed -- the `member_church_roles` table and hooks already exist
+- The `useSetMemberChurchRoles` hook handles inserting the selected role associations
+- The dialog remains blocking (no dismiss) until at least the branch is selected, but church roles can be left empty
 
