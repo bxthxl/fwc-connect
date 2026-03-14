@@ -66,7 +66,7 @@ export function useAddRole() {
     mutationFn: async ({ userId, role }: { userId: string; role: AppRole }) => {
       const { data, error } = await supabase
         .from('user_roles')
-        .insert({ user_id: userId, role })
+        .insert({ user_id: userId, role: role as any })
         .select()
         .single();
       if (error) throw error;
