@@ -128,7 +128,10 @@ export default function EventsManagementPage() {
             </h1>
             <p className="text-muted-foreground">Create and manage events</p>
           </div>
-          <Button onClick={openNew}><Plus className="h-4 w-4 mr-2" />New Event</Button>
+          <div className="flex items-center gap-3">
+            <BranchSelector selectedBranchId={branchFilter} onBranchChange={setBranchFilter} />
+            <Button onClick={openNew}><Plus className="h-4 w-4 mr-2" />New Event</Button>
+          </div>
         </div>
 
         {(!events || events.length === 0) ? (
