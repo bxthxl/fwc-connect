@@ -178,7 +178,8 @@ export const ATTENDANCE_STATUS_LABELS: Record<AttendanceStatus, string> = {
 };
 
 export const ROLE_LABELS: Record<AppRole, string> = {
-  admin: 'Admin',
+  super_admin: 'General Admin',
+  admin: 'Branch Admin',
   attendance_taker: 'Attendance Taker',
   minutes_taker: 'Minutes Taker',
 };

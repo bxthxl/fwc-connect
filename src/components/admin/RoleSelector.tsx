@@ -9,7 +9,7 @@ interface RoleSelectorProps {
   isLoading?: boolean;
 }
 
-const ALL_ROLES: AppRole[] = ['admin', 'attendance_taker', 'minutes_taker'];
+const ALL_ROLES: AppRole[] = ['super_admin', 'admin', 'attendance_taker', 'minutes_taker'];
 
 export function RoleSelector({ currentRoles, onRoleChange, isLoading }: RoleSelectorProps) {
   const availableRoles = ALL_ROLES.filter((role) => !currentRoles.includes(role));

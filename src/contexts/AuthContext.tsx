@@ -151,6 +151,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         profile,
         roles,
         isAdmin,
+        isSuperAdmin,
         canTakeAttendance,
         canManageMinutes,
         isLoading,
