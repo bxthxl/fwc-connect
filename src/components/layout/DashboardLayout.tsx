@@ -258,6 +258,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="container py-6 relative z-10">{children}</div>
         </main>
       </div>
+      <Chatbot />
     </div>
   );
 }
