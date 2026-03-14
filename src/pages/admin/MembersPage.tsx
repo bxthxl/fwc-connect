@@ -3,20 +3,26 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { MemberCard } from '@/components/admin/MemberCard';
 import { MemberDetailsSheet } from '@/components/admin/MemberDetailsSheet';
 import { VoiceGroupFilter } from '@/components/admin/VoiceGroupFilter';
+import { BranchSelector } from '@/components/admin/BranchSelector';
 import { EmptyState } from '@/components/common/EmptyState';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { Input } from '@/components/ui/input';
 import { useMembersWithRoles, useAddRole, useRemoveRole } from '@/hooks/useMembers';
+import { useAuth } from '@/contexts/AuthContext';
 import { Profile, VoiceGroup, AppRole } from '@/types/database';
 import { Users, Search } from 'lucide-react';
 
 export default function MembersPage() {
+  const { profile, isSuperAdmin } = useAuth();
   const [voiceGroupFilter, setVoiceGroupFilter] = useState<VoiceGroup | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMember, setSelectedMember] = useState<Profile | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [branchFilter, setBranchFilter] = useState<string | null>(
+    isSuperAdmin ? null : (profile?.branch_id ?? null)
+  );
 
-  const { data: members, isLoading } = useMembersWithRoles(voiceGroupFilter || undefined);
+  const { data: members, isLoading } = useMembersWithRoles(voiceGroupFilter || undefined, branchFilter);
   const addRole = useAddRole();
   const removeRole = useRemoveRole();
 
