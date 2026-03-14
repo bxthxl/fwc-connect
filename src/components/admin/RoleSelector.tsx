@@ -1,4 +1,5 @@
 import { AppRole, ROLE_LABELS } from '@/types/database';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Plus, X, Loader2 } from 'lucide-react';
@@ -9,17 +10,35 @@ interface RoleSelectorProps {
   isLoading?: boolean;
 }
 
-const ALL_ROLES: AppRole[] = ['super_admin', 'admin', 'attendance_taker', 'minutes_taker'];
-
 export function RoleSelector({ currentRoles, onRoleChange, isLoading }: RoleSelectorProps) {
-  const availableRoles = ALL_ROLES.filter((role) => !currentRoles.includes(role));
+  const { isSuperAdmin, isAdmin } = useAuth();
+
+  // Super admins can assign any role; branch admins can only assign attendance_taker/minutes_taker
+  const assignableRoles: AppRole[] = isSuperAdmin
+    ? ['super_admin', 'admin', 'attendance_taker', 'minutes_taker']
+    : isAdmin
+      ? ['attendance_taker', 'minutes_taker']
+      : [];
+
+  const availableRoles = assignableRoles.filter((role) => !currentRoles.includes(role));
+
+  // Roles the current user can manage (for removal)
+  const removableRoles = currentRoles.filter((role) => assignableRoles.includes(role));
+  const nonRemovableRoles = currentRoles.filter((role) => !assignableRoles.includes(role));
 
   return (
     <div className="space-y-3">
       {/* Current Roles */}
       {currentRoles.length > 0 ? (
         <div className="flex flex-wrap gap-2">
-          {currentRoles.map((role) => (
+          {/* Roles the user CAN'T remove (shown without X) */}
+          {nonRemovableRoles.map((role) => (
+            <Badge key={role} variant="secondary">
+              {ROLE_LABELS[role]}
+            </Badge>
+          ))}
+          {/* Roles the user CAN remove */}
+          {removableRoles.map((role) => (
             <Badge key={role} variant="secondary" className="pr-1 flex items-center gap-1">
               {ROLE_LABELS[role]}
               <button
