@@ -137,7 +137,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <>
           <div className="px-3 py-2 pt-4">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              {isAdmin ? 'Admin' : 'Management'}
+              {isSuperAdmin ? 'General Admin' : isAdmin ? 'Admin' : 'Management'}
             </h3>
           </div>
           {filteredAdminItems.map((item) => {
