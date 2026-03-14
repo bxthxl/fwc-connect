@@ -790,6 +790,7 @@ export type Database = {
       is_admin: { Args: { auth_uid: string }; Returns: boolean }
       is_attendance_taker: { Args: { auth_uid: string }; Returns: boolean }
       is_minutes_taker: { Args: { auth_uid: string }; Returns: boolean }
+      is_super_admin: { Args: { auth_uid: string }; Returns: boolean }
       notify_birthdays: { Args: never; Returns: undefined }
     }
     Enums: {
