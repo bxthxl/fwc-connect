@@ -80,7 +80,7 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-  const { profile, isAdmin, canTakeAttendance, canManageMinutes, signOut } = useAuth();
+  const { profile, isAdmin, isSuperAdmin, canTakeAttendance, canManageMinutes, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
