@@ -142,9 +142,9 @@ export default function WuyeSettingsPage() {
         <div className="space-y-1">
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <MapPin className="h-8 w-8 text-primary" />
-            {branch.name}
+            Branch Settings
           </h1>
-          <p className="text-muted-foreground">Branch details and quick stats</p>
+          <p className="text-muted-foreground">{branch.name} — details and quick stats</p>
           <div className="mt-2">
             <BranchSelector selectedBranchId={selectedBranchId} onBranchChange={setSelectedBranchId} />
           </div>
