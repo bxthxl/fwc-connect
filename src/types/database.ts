@@ -19,7 +19,7 @@ export type AttendanceStatus = 'present' | 'absent' | 'excused';
 
 export type SongCategory = 'praise_worship' | 'friday_special' | 'sunday_special';
 
-export type AppRole = 'admin' | 'attendance_taker' | 'minutes_taker';
+export type AppRole = 'admin' | 'super_admin' | 'attendance_taker' | 'minutes_taker';
 
 export interface Profile {
   id: string;
@@ -178,7 +178,8 @@ export const ATTENDANCE_STATUS_LABELS: Record<AttendanceStatus, string> = {
 };
 
 export const ROLE_LABELS: Record<AppRole, string> = {
-  admin: 'Admin',
+  super_admin: 'General Admin',
+  admin: 'Branch Admin',
   attendance_taker: 'Attendance Taker',
   minutes_taker: 'Minutes Taker',
 };

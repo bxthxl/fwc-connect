@@ -45,7 +45,7 @@ function AdminRoute({ children, requireAdmin = false, requireAttendance = false,
   requireAttendance?: boolean;
   requireMinutes?: boolean;
 }) {
-  const { user, isLoading, isNewUser, isAdmin, canTakeAttendance, canManageMinutes } = useAuth();
+  const { user, isLoading, isNewUser, isAdmin, isSuperAdmin, canTakeAttendance, canManageMinutes } = useAuth();
   if (isLoading) return <PageLoader />;
   if (!user) return <Navigate to="/auth" replace />;
   if (isNewUser) return <Navigate to="/auth" replace />;

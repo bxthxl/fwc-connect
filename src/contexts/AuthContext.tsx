@@ -9,6 +9,7 @@ interface AuthContextType {
   profile: Profile | null;
   roles: AppRole[];
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   canTakeAttendance: boolean;
   canManageMinutes: boolean;
   isLoading: boolean;
@@ -27,7 +28,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isNewUser, setIsNewUser] = useState(false);
 
-  const isAdmin = roles.includes('admin');
+  const isSuperAdmin = roles.includes('super_admin');
+  const isAdmin = isSuperAdmin || roles.includes('admin');
   const canTakeAttendance = isAdmin || roles.includes('attendance_taker');
   const canManageMinutes = isAdmin || roles.includes('minutes_taker');
 
@@ -149,6 +151,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         profile,
         roles,
         isAdmin,
+        isSuperAdmin,
         canTakeAttendance,
         canManageMinutes,
         isLoading,

@@ -80,7 +80,7 @@ interface DashboardLayoutProps {
 }
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-  const { profile, isAdmin, canTakeAttendance, canManageMinutes, signOut } = useAuth();
+  const { profile, isAdmin, isSuperAdmin, canTakeAttendance, canManageMinutes, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -137,7 +137,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         <>
           <div className="px-3 py-2 pt-4">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              {isAdmin ? 'Admin' : 'Management'}
+              {isSuperAdmin ? 'General Admin' : isAdmin ? 'Admin' : 'Management'}
             </h3>
           </div>
           {filteredAdminItems.map((item) => {
