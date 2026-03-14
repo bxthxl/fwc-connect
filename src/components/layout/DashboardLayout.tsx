@@ -40,6 +40,7 @@ import fwcLogo from '@/assets/fwc-logo.png';
 import fwcWatermark from '@/assets/fwc-watermark.png';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { ProfileCompletionDialog } from '@/components/common/ProfileCompletionDialog';
+import { Chatbot } from '@/components/chat/Chatbot';
 
 interface NavItem {
   label: string;
