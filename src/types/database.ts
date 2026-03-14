@@ -19,7 +19,7 @@ export type AttendanceStatus = 'present' | 'absent' | 'excused';
 
 export type SongCategory = 'praise_worship' | 'friday_special' | 'sunday_special';
 
-export type AppRole = 'admin' | 'attendance_taker' | 'minutes_taker';
+export type AppRole = 'admin' | 'super_admin' | 'attendance_taker' | 'minutes_taker';
 
 export interface Profile {
   id: string;
