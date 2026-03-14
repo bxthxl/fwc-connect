@@ -9,6 +9,7 @@ interface AuthContextType {
   profile: Profile | null;
   roles: AppRole[];
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   canTakeAttendance: boolean;
   canManageMinutes: boolean;
   isLoading: boolean;
