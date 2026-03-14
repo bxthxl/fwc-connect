@@ -19,7 +19,7 @@ export default function MembersPage() {
   const [selectedMember, setSelectedMember] = useState<Profile | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const [branchFilter, setBranchFilter] = useState<string | null>(
-    isSuperAdmin ? null : (profile?.branch_id ?? null)
+    profile?.branch_id ?? null
   );
 
   const { data: members, isLoading } = useMembersWithRoles(voiceGroupFilter || undefined, branchFilter);
