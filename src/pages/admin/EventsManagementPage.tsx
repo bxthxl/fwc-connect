@@ -13,6 +13,7 @@ import { PageLoader } from '@/components/common/LoadingSpinner';
 import { EmptyState } from '@/components/common/EmptyState';
 import { MemberAvatar } from '@/components/common/MemberAvatar';
 import { VoiceGroupBadge } from '@/components/common/VoiceGroupBadge';
+import { BranchSelector } from '@/components/admin/BranchSelector';
 import { useAllEvents, useCreateEvent, useUpdateEvent, useDeleteEvent, useEventBGVs, Event } from '@/hooks/useEvents';
 import { useMembers } from '@/hooks/useMembers';
 import { useBranches } from '@/hooks/useBranches';
