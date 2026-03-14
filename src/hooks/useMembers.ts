@@ -7,9 +7,9 @@ export interface MemberWithRoles extends Profile {
   roles: AppRole[];
 }
 
-export function useMembers(voiceGroupFilter?: VoiceGroup) {
+export function useMembers(voiceGroupFilter?: VoiceGroup, branchFilter?: string | null) {
   return useQuery({
-    queryKey: ['members', voiceGroupFilter],
+    queryKey: ['members', voiceGroupFilter, branchFilter],
     queryFn: async () => {
       let query = supabase
         .from('profiles')
@@ -18,6 +18,10 @@ export function useMembers(voiceGroupFilter?: VoiceGroup) {
 
       if (voiceGroupFilter) {
         query = query.eq('voice_group', voiceGroupFilter);
+      }
+
+      if (branchFilter) {
+        query = query.eq('branch_id', branchFilter);
       }
 
       const { data: profiles, error } = await query;
@@ -40,8 +44,8 @@ export function useMemberRoles() {
   });
 }
 
-export function useMembersWithRoles(voiceGroupFilter?: VoiceGroup) {
-  const { data: members, isLoading: membersLoading, error: membersError } = useMembers(voiceGroupFilter);
+export function useMembersWithRoles(voiceGroupFilter?: VoiceGroup, branchFilter?: string | null) {
+  const { data: members, isLoading: membersLoading, error: membersError } = useMembers(voiceGroupFilter, branchFilter);
   const { data: roles, isLoading: rolesLoading, error: rolesError } = useMemberRoles();
 
   const membersWithRoles: MemberWithRoles[] = (members || []).map((member) => ({
