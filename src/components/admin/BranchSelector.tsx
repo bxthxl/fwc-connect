@@ -24,14 +24,13 @@ export function BranchSelector({ selectedBranchId, onBranchChange }: BranchSelec
     <div className="flex items-center gap-2">
       <Globe className="h-4 w-4 text-muted-foreground" />
       <Select
-        value={selectedBranchId ?? 'all'}
-        onValueChange={(val) => onBranchChange(val === 'all' ? null : val)}
+        value={selectedBranchId ?? ''}
+        onValueChange={(val) => onBranchChange(val)}
       >
         <SelectTrigger className="w-[220px]">
           <SelectValue placeholder="All Branches" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All Branches</SelectItem>
           {branches?.map((branch) => (
             <SelectItem key={branch.id} value={branch.id}>
               {branch.name}

@@ -13,6 +13,7 @@ import { PageLoader } from '@/components/common/LoadingSpinner';
 import { EmptyState } from '@/components/common/EmptyState';
 import { MemberAvatar } from '@/components/common/MemberAvatar';
 import { VoiceGroupBadge } from '@/components/common/VoiceGroupBadge';
+import { BranchSelector } from '@/components/admin/BranchSelector';
 import { useAllEvents, useCreateEvent, useUpdateEvent, useDeleteEvent, useEventBGVs, Event } from '@/hooks/useEvents';
 import { useMembers } from '@/hooks/useMembers';
 import { useBranches } from '@/hooks/useBranches';
@@ -51,9 +52,10 @@ function BGVPicker({ members, selectedIds, onToggle }: { members: Profile[]; sel
 }
 
 export default function EventsManagementPage() {
-  const { profile } = useAuth();
-  const { data: events, isLoading } = useAllEvents();
-  const { data: members } = useMembers();
+  const { profile, isSuperAdmin } = useAuth();
+  const [branchFilter, setBranchFilter] = useState<string | null>(profile?.branch_id ?? null);
+  const { data: events, isLoading } = useAllEvents(branchFilter);
+  const { data: members } = useMembers(undefined, branchFilter);
   const { data: branches } = useBranches();
   const createEvent = useCreateEvent();
   const updateEvent = useUpdateEvent();
@@ -126,7 +128,10 @@ export default function EventsManagementPage() {
             </h1>
             <p className="text-muted-foreground">Create and manage events</p>
           </div>
-          <Button onClick={openNew}><Plus className="h-4 w-4 mr-2" />New Event</Button>
+          <div className="flex items-center gap-3">
+            <BranchSelector selectedBranchId={branchFilter} onBranchChange={setBranchFilter} />
+            <Button onClick={openNew}><Plus className="h-4 w-4 mr-2" />New Event</Button>
+          </div>
         </div>
 
         {(!events || events.length === 0) ? (

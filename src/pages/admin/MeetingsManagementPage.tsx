@@ -4,6 +4,7 @@ import { MeetingCard } from '@/components/meetings/MeetingCard';
 import { MeetingForm } from '@/components/admin/MeetingForm';
 import { EmptyState } from '@/components/common/EmptyState';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { BranchSelector } from '@/components/admin/BranchSelector';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
@@ -16,15 +17,18 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useMeetings, useCreateMeeting, useUpdateMeeting, useDeleteMeeting } from '@/hooks/useMeetings';
+import { useAuth } from '@/contexts/AuthContext';
 import { Meeting } from '@/types/database';
 import { Calendar, Plus, Pencil, Trash2 } from 'lucide-react';
 
 export default function MeetingsManagementPage() {
+  const { profile, isSuperAdmin } = useAuth();
   const [isCreating, setIsCreating] = useState(false);
   const [editingMeeting, setEditingMeeting] = useState<Meeting | null>(null);
   const [deletingMeeting, setDeletingMeeting] = useState<Meeting | null>(null);
+  const [branchFilter, setBranchFilter] = useState<string | null>(profile?.branch_id ?? null);
 
-  const { data: meetings, isLoading } = useMeetings();
+  const { data: meetings, isLoading } = useMeetings(undefined, branchFilter);
   const createMeeting = useCreateMeeting();
   const updateMeeting = useUpdateMeeting();
   const deleteMeeting = useDeleteMeeting();
@@ -77,10 +81,13 @@ export default function MeetingsManagementPage() {
             <h1 className="text-3xl font-bold">Meetings Management</h1>
             <p className="text-muted-foreground">Create and manage choir meetings</p>
           </div>
-          <Button onClick={() => setIsCreating(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Create Meeting
-          </Button>
+          <div className="flex items-center gap-3">
+            <BranchSelector selectedBranchId={branchFilter} onBranchChange={setBranchFilter} />
+            <Button onClick={() => setIsCreating(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Create Meeting
+            </Button>
+          </div>
         </div>
 
         {isLoading ? (
