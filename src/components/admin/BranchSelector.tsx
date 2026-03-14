@@ -31,7 +31,6 @@ export function BranchSelector({ selectedBranchId, onBranchChange }: BranchSelec
           <SelectValue placeholder="All Branches" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">All Branches</SelectItem>
           {branches?.map((branch) => (
             <SelectItem key={branch.id} value={branch.id}>
               {branch.name}
