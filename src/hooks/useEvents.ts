@@ -46,14 +46,20 @@ export function useEvents() {
   });
 }
 
-export function useAllEvents() {
+export function useAllEvents(branchFilter?: string | null) {
   return useQuery({
-    queryKey: ['all-events'],
+    queryKey: ['all-events', branchFilter],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('events')
         .select('*')
         .order('event_date', { ascending: false });
+
+      if (branchFilter) {
+        query = query.or(`branch_id.eq.${branchFilter},branch_id.is.null`);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data as Event[];
     },

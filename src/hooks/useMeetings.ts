@@ -3,11 +3,11 @@ import { supabase } from '@/integrations/supabase/client';
 import { Meeting } from '@/types/database';
 import { useToast } from '@/hooks/use-toast';
 
-export function useMeetings(filter?: 'upcoming' | 'past') {
+export function useMeetings(filter?: 'upcoming' | 'past', branchFilter?: string | null) {
   const today = new Date().toISOString().split('T')[0];
 
   return useQuery({
-    queryKey: ['meetings', filter],
+    queryKey: ['meetings', filter, branchFilter],
     queryFn: async () => {
       let query = supabase
         .from('meetings')
@@ -18,6 +18,10 @@ export function useMeetings(filter?: 'upcoming' | 'past') {
         query = query.gte('meeting_date', today);
       } else if (filter === 'past') {
         query = query.lt('meeting_date', today);
+      }
+
+      if (branchFilter) {
+        query = query.or(`branch_id.eq.${branchFilter},branch_id.is.null`);
       }
 
       const { data, error } = await query;
