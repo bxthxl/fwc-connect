@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { StatsCard } from '@/components/admin/StatsCard';
+import { BranchSelector } from '@/components/admin/BranchSelector';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { MapPin, Users, CalendarDays, Calendar, Pencil, Save, X, Church, Phone, User } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
@@ -14,7 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 export default function WuyeSettingsPage() {
-  const { profile } = useAuth();
+  const { profile, isSuperAdmin } = useAuth();
   const { data: branches, isLoading: branchesLoading } = useBranches();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -22,8 +23,9 @@ export default function WuyeSettingsPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [editForm, setEditForm] = useState({ address: '', pastor_name: '', pastor_phone: '' });
+  const [selectedBranchId, setSelectedBranchId] = useState<string | null>(profile?.branch_id ?? null);
 
-  const branchId = profile?.branch_id;
+  const branchId = selectedBranchId ?? profile?.branch_id;
 
   const branch = branches?.find(b => b.id === branchId) ?? null;
 
