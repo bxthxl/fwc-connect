@@ -81,10 +81,13 @@ export default function MeetingsManagementPage() {
             <h1 className="text-3xl font-bold">Meetings Management</h1>
             <p className="text-muted-foreground">Create and manage choir meetings</p>
           </div>
-          <Button onClick={() => setIsCreating(true)}>
-            <Plus className="h-4 w-4 mr-2" />
-            Create Meeting
-          </Button>
+          <div className="flex items-center gap-3">
+            <BranchSelector selectedBranchId={branchFilter} onBranchChange={setBranchFilter} />
+            <Button onClick={() => setIsCreating(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Create Meeting
+            </Button>
+          </div>
         </div>
 
         {isLoading ? (
