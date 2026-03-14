@@ -44,8 +44,8 @@ export function useMemberRoles() {
   });
 }
 
-export function useMembersWithRoles(voiceGroupFilter?: VoiceGroup) {
-  const { data: members, isLoading: membersLoading, error: membersError } = useMembers(voiceGroupFilter);
+export function useMembersWithRoles(voiceGroupFilter?: VoiceGroup, branchFilter?: string | null) {
+  const { data: members, isLoading: membersLoading, error: membersError } = useMembers(voiceGroupFilter, branchFilter);
   const { data: roles, isLoading: rolesLoading, error: rolesError } = useMemberRoles();
 
   const membersWithRoles: MemberWithRoles[] = (members || []).map((member) => ({
