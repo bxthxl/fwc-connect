@@ -40,6 +40,7 @@ import fwcLogo from '@/assets/fwc-logo.png';
 import fwcWatermark from '@/assets/fwc-watermark.png';
 import { NotificationBell } from '@/components/notifications/NotificationBell';
 import { ProfileCompletionDialog } from '@/components/common/ProfileCompletionDialog';
+import { Chatbot } from '@/components/chat/Chatbot';
 
 interface NavItem {
   label: string;
@@ -257,6 +258,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           <div className="container py-6 relative z-10">{children}</div>
         </main>
       </div>
+      <Chatbot />
     </div>
   );
 }
