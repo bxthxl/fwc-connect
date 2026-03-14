@@ -52,9 +52,10 @@ function BGVPicker({ members, selectedIds, onToggle }: { members: Profile[]; sel
 }
 
 export default function EventsManagementPage() {
-  const { profile } = useAuth();
-  const { data: events, isLoading } = useAllEvents();
-  const { data: members } = useMembers();
+  const { profile, isSuperAdmin } = useAuth();
+  const [branchFilter, setBranchFilter] = useState<string | null>(profile?.branch_id ?? null);
+  const { data: events, isLoading } = useAllEvents(branchFilter);
+  const { data: members } = useMembers(undefined, branchFilter);
   const { data: branches } = useBranches();
   const createEvent = useCreateEvent();
   const updateEvent = useUpdateEvent();
