@@ -145,6 +145,9 @@ export default function WuyeSettingsPage() {
             {branch.name}
           </h1>
           <p className="text-muted-foreground">Branch details and quick stats</p>
+          <div className="mt-2">
+            <BranchSelector selectedBranchId={selectedBranchId} onBranchChange={setSelectedBranchId} />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
