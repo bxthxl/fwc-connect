@@ -72,7 +72,7 @@ const adminNavItems: NavItem[] = [
   { label: 'Announcements', href: '/admin/announcements', icon: Megaphone, adminOnly: true },
   { label: 'Onboarding', href: '/admin/onboarding', icon: BookOpen, adminOnly: true },
   { label: 'BGV Selector', href: '/admin/bgv-selector', icon: Shuffle, adminOnly: true },
-  { label: 'Wuye Settings', href: '/admin/wuye-settings', icon: MapPin, adminOnly: true },
+  { label: 'Branch Settings', href: '/admin/branch-settings', icon: MapPin, adminOnly: true },
 ];
 
 interface DashboardLayoutProps {

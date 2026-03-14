@@ -90,7 +90,7 @@ function AppRoutes() {
       <Route path="/admin/songs" element={<AdminRoute requireAdmin><SongsManagementPage /></AdminRoute>} />
       <Route path="/admin/onboarding" element={<AdminRoute requireAdmin><OnboardingSettingsPage /></AdminRoute>} />
       <Route path="/admin/bgv-selector" element={<AdminRoute requireAdmin><BGVSelectorPage /></AdminRoute>} />
-      <Route path="/admin/wuye-settings" element={<AdminRoute requireAdmin><WuyeSettingsPage /></AdminRoute>} />
+      <Route path="/admin/branch-settings" element={<AdminRoute requireAdmin><WuyeSettingsPage /></AdminRoute>} />
       
       <Route path="*" element={<NotFound />} />
     </Routes>
