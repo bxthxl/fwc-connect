@@ -794,7 +794,7 @@ export type Database = {
       notify_birthdays: { Args: never; Returns: undefined }
     }
     Enums: {
-      app_role: "admin" | "attendance_taker" | "minutes_taker"
+      app_role: "admin" | "attendance_taker" | "minutes_taker" | "super_admin"
       attendance_status: "present" | "absent" | "excused"
       instrument_type:
         | "bass_guitar"
@@ -937,7 +937,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "attendance_taker", "minutes_taker"],
+      app_role: ["admin", "attendance_taker", "minutes_taker", "super_admin"],
       attendance_status: ["present", "absent", "excused"],
       instrument_type: [
         "bass_guitar",
