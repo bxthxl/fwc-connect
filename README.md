@@ -3,67 +3,75 @@
 
 ![React](https://img.shields.io/badge/React-Frontend-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-Language-blue)
+![Supabase](https://img.shields.io/badge/Supabase-Backend-green)
 ![Status](https://img.shields.io/badge/status-active-success)
-![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
-FWC Connect is a modern web platform designed to support **community engagement, collaboration, and information sharing** for members of the FWC community.
+FWC Connect is a modern web platform designed to enable **community engagement, collaboration, and information sharing**.
 
-The platform provides a centralized digital space where users can access updates, interact with the community, and participate in various activities and initiatives.
-
----
-
-## Project Overview
-
-FWC Connect was developed to create a **modern digital platform** that improves communication and collaboration within a community.
-
-The system provides an organized interface where users can access relevant information, interact with other members, and stay updated with important announcements.
-
-The application is built using modern web technologies to ensure scalability, responsiveness, and maintainability.
+The application provides a digital environment where members can interact, access information, and participate in activities within the FWC community.
 
 ---
 
-## Key Features
+# Project Overview
+
+FWC Connect was built using modern web technologies to create a **scalable and responsive community platform**.
+
+The system integrates a **React frontend**, **Supabase backend services**, and modern development tooling to provide a smooth and maintainable architecture.
+
+The platform aims to improve communication and engagement by providing a centralized digital hub for community members.
+
+---
+
+# Key Features
 
 - Community engagement platform
-- Information sharing and announcements
-- User interaction and collaboration
-- Modern responsive user interface
+- Information sharing
+- Modern responsive UI
+- Backend integration with Supabase
 - Scalable web application architecture
 
 ---
 
-## Project Structure
+# Project Structure
 
 ```
 fwc-connect
 │
-├── client/            # Frontend application
-├── server/            # Backend server logic
-├── shared/            # Shared utilities and configurations
-├── package.json       # Project dependencies
-├── README.md          # Project documentation
+├── public/                # Static assets
+├── src/                   # Main application source code
+├── supabase/              # Supabase configuration and backend logic
+│
+├── index.html             # Application entry HTML file
+├── package.json           # Project dependencies and scripts
+├── tailwind.config.ts     # Tailwind CSS configuration
+├── vite.config.ts         # Vite configuration
+├── eslint.config.js       # ESLint configuration
+├── components.json        # UI component configuration
+├── postcss.config.js      # PostCSS configuration
+├── tsconfig.json          # TypeScript configuration
+└── README.md              # Project documentation
 ```
 
 ---
 
-## Technologies Used
+# Technologies Used
 
 ### Frontend
 - React
 - TypeScript
 - Vite
+- Tailwind CSS
 
 ### Backend
-- Node.js
-- Express
-
-### Database & Tools
 - Supabase
-- Drizzle ORM
+
+### Development Tools
+- ESLint
+- PostCSS
 
 ---
 
-## Installation
+# Installation
 
 Clone the repository:
 
@@ -71,7 +79,7 @@ Clone the repository:
 git clone https://github.com/bxthxl/fwc-connect.git
 ```
 
-Navigate into the project directory:
+Navigate to the project directory:
 
 ```bash
 cd fwc-connect
@@ -91,16 +99,16 @@ npm run dev
 
 ---
 
-## Future Improvements
+# Future Improvements
 
-- User authentication and account management
-- Real-time messaging and notifications
-- Advanced community interaction features
-- Mobile-friendly enhancements
+- Real-time community messaging
+- User authentication and profiles
+- Notification system
+- Mobile optimization
 
 ---
 
-## Author
+# Author
 
 **Bethel Eberechukwu George-Nwaeke**
 
