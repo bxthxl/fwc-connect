@@ -1,3 +1,7 @@
+![React](https://img.shields.io/badge/React-Frontend-blue)
+![TypeScript](https://img.shields.io/badge/TypeScript-Language-blue)
+![Status](https://img.shields.io/badge/status-active-success)
+
 # FWC Connect
 
 FWC Connect is a modern web platform designed to support community engagement, collaboration, and information sharing for FWC members.
