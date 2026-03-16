@@ -1,45 +1,110 @@
+# FWC Connect
+### Community Engagement and Collaboration Platform
+
 ![React](https://img.shields.io/badge/React-Frontend-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-Language-blue)
 ![Status](https://img.shields.io/badge/status-active-success)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
-# FWC Connect
+FWC Connect is a modern web platform designed to support **community engagement, collaboration, and information sharing** for members of the FWC community.
 
-FWC Connect is a modern web platform designed to support community engagement, collaboration, and information sharing for FWC members.
-
-The application provides a centralized digital space where users can access updates, interact with the community, and participate in various activities and initiatives.
-
----
-
-## Overview
-
-FWC Connect was built as a scalable web application to support communication, community building, and digital interaction within an organized network.
-
-The platform is designed with modern web technologies to ensure responsiveness, performance, and maintainability.
+The platform provides a centralized digital space where users can access updates, interact with the community, and participate in various activities and initiatives.
 
 ---
 
-## Features
+## Project Overview
+
+FWC Connect was developed to create a **modern digital platform** that improves communication and collaboration within a community.
+
+The system provides an organized interface where users can access relevant information, interact with other members, and stay updated with important announcements.
+
+The application is built using modern web technologies to ensure scalability, responsiveness, and maintainability.
+
+---
+
+## Key Features
 
 - Community engagement platform
-- Centralized information sharing
+- Information sharing and announcements
 - User interaction and collaboration
-- Scalable modern web architecture
-- Responsive web interface
+- Modern responsive user interface
+- Scalable web application architecture
 
 ---
 
-## Tech Stack
+## Project Structure
 
+```
+fwc-connect
+│
+├── client/            # Frontend application
+├── server/            # Backend server logic
+├── shared/            # Shared utilities and configurations
+├── package.json       # Project dependencies
+├── README.md          # Project documentation
+```
+
+---
+
+## Technologies Used
+
+### Frontend
 - React
 - TypeScript
+- Vite
+
+### Backend
 - Node.js
-- Modern frontend tooling
+- Express
+
+### Database & Tools
+- Supabase
+- Drizzle ORM
 
 ---
 
-## Getting Started
+## Installation
 
 Clone the repository:
 
 ```bash
 git clone https://github.com/bxthxl/fwc-connect.git
+```
+
+Navigate into the project directory:
+
+```bash
+cd fwc-connect
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run the development server:
+
+```bash
+npm run dev
+```
+
+---
+
+## Future Improvements
+
+- User authentication and account management
+- Real-time messaging and notifications
+- Advanced community interaction features
+- Mobile-friendly enhancements
+
+---
+
+## Author
+
+**Bethel Eberechukwu George-Nwaeke**
+
+Computer Scientist  
+Software Developer | AI Systems Enthusiast  
+
+GitHub: https://github.com/bxthxl
