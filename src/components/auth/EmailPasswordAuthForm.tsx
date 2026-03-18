@@ -103,10 +103,11 @@ export function EmailPasswordAuthForm({ onAuthSuccess, initialMode = 'signin' }:
       return;
     }
 
-    if (!validatePassword(password)) {
+    if (!isPasswordValid(password)) {
+      const { errors } = validatePassword(password);
       toast({
         title: 'Weak password',
-        description: 'Password must be at least 6 characters.',
+        description: errors[0] || 'Please use a stronger password.',
         variant: 'destructive',
       });
       return;
