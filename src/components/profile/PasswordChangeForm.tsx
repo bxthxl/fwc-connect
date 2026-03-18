@@ -18,10 +18,11 @@ export function PasswordChangeForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (newPassword.length < 6) {
+    const { valid, errors } = validatePassword(newPassword);
+    if (!valid) {
       toast({
-        title: 'Password too short',
-        description: 'Password must be at least 6 characters',
+        title: 'Weak password',
+        description: errors[0] || 'Please use a stronger password.',
         variant: 'destructive',
       });
       return;
