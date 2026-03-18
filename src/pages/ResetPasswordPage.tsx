@@ -21,8 +21,9 @@ export default function ResetPasswordPage() {
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 6) {
-      toast({ title: 'Weak password', description: 'Password must be at least 6 characters.', variant: 'destructive' });
+    const { valid, errors } = validatePassword(password);
+    if (!valid) {
+      toast({ title: 'Weak password', description: errors[0] || 'Please use a stronger password.', variant: 'destructive' });
       return;
     }
     if (password !== confirmPassword) {
