@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { Lock, Loader2, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { validatePassword } from '@/lib/validation';
+import { PasswordStrengthIndicator } from '@/components/common/PasswordStrengthIndicator';
 import fwcLogo from '@/assets/fwc-logo.png';
 
 export default function ResetPasswordPage() {
