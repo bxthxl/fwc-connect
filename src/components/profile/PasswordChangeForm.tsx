@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription }
 import { useChangePassword } from '@/hooks/useProfile';
 import { Loader2, Lock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { validatePassword } from '@/lib/validation';
+import { PasswordStrengthIndicator } from '@/components/common/PasswordStrengthIndicator';
 
 export function PasswordChangeForm() {
   const [newPassword, setNewPassword] = useState('');
