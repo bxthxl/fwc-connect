@@ -31,9 +31,7 @@ export function EmailPasswordAuthForm({ onAuthSuccess, initialMode = 'signin' }:
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const validatePassword = (password: string) => {
-    return password.length >= 6;
-  };
+  const isPasswordValid = (password: string) => validatePassword(password).valid;
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
