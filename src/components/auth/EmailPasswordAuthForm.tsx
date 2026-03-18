@@ -6,6 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import { Mail, Lock, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react';
+import { validatePassword } from '@/lib/validation';
+import { PasswordStrengthIndicator } from '@/components/common/PasswordStrengthIndicator';
 import fwcLogo from '@/assets/fwc-logo.png';
 
 interface EmailPasswordAuthFormProps {
@@ -29,9 +31,7 @@ export function EmailPasswordAuthForm({ onAuthSuccess, initialMode = 'signin' }:
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   };
 
-  const validatePassword = (password: string) => {
-    return password.length >= 6;
-  };
+  const isPasswordValid = (password: string) => validatePassword(password).valid;
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -103,10 +103,11 @@ export function EmailPasswordAuthForm({ onAuthSuccess, initialMode = 'signin' }:
       return;
     }
 
-    if (!validatePassword(password)) {
+    if (!isPasswordValid(password)) {
+      const { errors } = validatePassword(password);
       toast({
         title: 'Weak password',
-        description: 'Password must be at least 6 characters.',
+        description: errors[0] || 'Please use a stronger password.',
         variant: 'destructive',
       });
       return;
@@ -367,9 +368,7 @@ export function EmailPasswordAuthForm({ onAuthSuccess, initialMode = 'signin' }:
                 </button>
               </div>
               {mode === 'signup' && (
-                <p className="text-xs text-muted-foreground">
-                  Password must be at least 6 characters
-                </p>
+                <PasswordStrengthIndicator password={password} />
               )}
             </div>
 
@@ -416,7 +415,16 @@ export function EmailPasswordAuthForm({ onAuthSuccess, initialMode = 'signin' }:
 
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 space-y-3 text-center">
+            {mode === 'signin' && (
+              <button
+                type="button"
+                onClick={() => setMode('forgot-password')}
+                className="text-sm text-muted-foreground hover:text-primary hover:underline"
+              >
+                Forgot your password?
+              </button>
+            )}
             {mode === 'signin' ? (
               <p className="text-sm text-muted-foreground">
                 Don't have an account?{' '}

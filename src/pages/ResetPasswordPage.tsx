@@ -7,6 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { Lock, Loader2, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { validatePassword } from '@/lib/validation';
+import { PasswordStrengthIndicator } from '@/components/common/PasswordStrengthIndicator';
 import fwcLogo from '@/assets/fwc-logo.png';
 
 export default function ResetPasswordPage() {
@@ -19,8 +21,9 @@ export default function ResetPasswordPage() {
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 6) {
-      toast({ title: 'Weak password', description: 'Password must be at least 6 characters.', variant: 'destructive' });
+    const { valid, errors } = validatePassword(password);
+    if (!valid) {
+      toast({ title: 'Weak password', description: errors[0] || 'Please use a stronger password.', variant: 'destructive' });
       return;
     }
     if (password !== confirmPassword) {
@@ -88,6 +91,7 @@ export default function ResetPasswordPage() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
+              <PasswordStrengthIndicator password={password} />
             </div>
             <div className="space-y-2">
               <Label>Confirm Password</Label>

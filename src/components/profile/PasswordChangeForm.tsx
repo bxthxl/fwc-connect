@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter, CardDescription }
 import { useChangePassword } from '@/hooks/useProfile';
 import { Loader2, Lock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { validatePassword } from '@/lib/validation';
+import { PasswordStrengthIndicator } from '@/components/common/PasswordStrengthIndicator';
 
 export function PasswordChangeForm() {
   const [newPassword, setNewPassword] = useState('');
@@ -16,10 +18,11 @@ export function PasswordChangeForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (newPassword.length < 6) {
+    const { valid, errors } = validatePassword(newPassword);
+    if (!valid) {
       toast({
-        title: 'Password too short',
-        description: 'Password must be at least 6 characters',
+        title: 'Weak password',
+        description: errors[0] || 'Please use a stronger password.',
         variant: 'destructive',
       });
       return;
@@ -60,9 +63,10 @@ export function PasswordChangeForm() {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="Enter new password"
-              minLength={6}
+              minLength={8}
               required
             />
+            <PasswordStrengthIndicator password={newPassword} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirm_password">Confirm Password</Label>

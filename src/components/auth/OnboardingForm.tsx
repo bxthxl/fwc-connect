@@ -29,7 +29,14 @@ const years = Array.from({ length: 50 }, (_, i) => currentYear - i);
 
 const onboardingSchema = z.object({
   full_name: z.string().min(2, 'Name must be at least 2 characters').max(100),
-  phone: z.string().optional().or(z.literal('')),
+  phone: z.string().optional().or(z.literal('')).refine(
+    (val) => {
+      if (!val || val.trim() === '') return true;
+      const cleaned = val.replace(/[\s\-().]/g, '');
+      return /^(?:\+?234|0)[789]\d{9}$/.test(cleaned);
+    },
+    { message: 'Please enter a valid Nigerian phone number (e.g. +2348012345678 or 08012345678)' }
+  ),
   residence: z.string().min(5, 'Please enter your full address'),
   birthday: z.date({ required_error: 'Birthday is required' }),
   year_joined: z.number().min(1950).max(currentYear),
@@ -37,7 +44,13 @@ const onboardingSchema = z.object({
   primary_instrument: z.enum(['bass_guitar', 'drum', 'keyboards', 'saxophones', 'violin', 'electric_guitar', 'electric_keyboard', 'conga_drums', 'flute', 'talking_drums'] as const).optional(),
   secondary_instrument: z.enum(['bass_guitar', 'drum', 'keyboards', 'saxophones', 'violin', 'electric_guitar', 'electric_keyboard', 'conga_drums', 'flute', 'talking_drums'] as const).optional(),
   care_group_leader_name: z.string().min(2, 'Leader name is required'),
-  care_group_leader_phone: z.string().min(10, 'Valid phone number is required'),
+  care_group_leader_phone: z.string().min(1, 'Phone number is required').refine(
+    (val) => {
+      const cleaned = val.replace(/[\s\-().]/g, '');
+      return /^(?:\+?234|0)[789]\d{9}$/.test(cleaned);
+    },
+    { message: 'Please enter a valid Nigerian phone number (e.g. +2348012345678 or 08012345678)' }
+  ),
   branch_id: z.string().min(1, 'Please select your branch'),
 });
 
