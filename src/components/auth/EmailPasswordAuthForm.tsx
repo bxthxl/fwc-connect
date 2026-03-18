@@ -6,6 +6,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import { Mail, Lock, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react';
+import { validatePassword } from '@/lib/validation';
+import { PasswordStrengthIndicator } from '@/components/common/PasswordStrengthIndicator';
 import fwcLogo from '@/assets/fwc-logo.png';
 
 interface EmailPasswordAuthFormProps {
