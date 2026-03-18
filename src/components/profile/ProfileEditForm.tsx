@@ -8,6 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { DatePickerWithDropdowns } from '@/components/ui/date-picker-with-dropdowns';
 import { useUpdateProfile } from '@/hooks/useProfile';
 import { Loader2 } from 'lucide-react';
+import { validateNigerianPhone } from '@/lib/validation';
+import { useToast } from '@/hooks/use-toast';
 
 interface ProfileEditFormProps {
   profile: Profile;
