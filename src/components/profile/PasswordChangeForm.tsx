@@ -63,9 +63,10 @@ export function PasswordChangeForm() {
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="Enter new password"
-              minLength={6}
+              minLength={8}
               required
             />
+            <PasswordStrengthIndicator password={newPassword} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirm_password">Confirm Password</Label>

@@ -415,7 +415,16 @@ export function EmailPasswordAuthForm({ onAuthSuccess, initialMode = 'signin' }:
 
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 space-y-3 text-center">
+            {mode === 'signin' && (
+              <button
+                type="button"
+                onClick={() => setMode('forgot-password')}
+                className="text-sm text-muted-foreground hover:text-primary hover:underline"
+              >
+                Forgot your password?
+              </button>
+            )}
             {mode === 'signin' ? (
               <p className="text-sm text-muted-foreground">
                 Don't have an account?{' '}

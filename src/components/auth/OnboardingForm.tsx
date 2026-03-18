@@ -44,7 +44,13 @@ const onboardingSchema = z.object({
   primary_instrument: z.enum(['bass_guitar', 'drum', 'keyboards', 'saxophones', 'violin', 'electric_guitar', 'electric_keyboard', 'conga_drums', 'flute', 'talking_drums'] as const).optional(),
   secondary_instrument: z.enum(['bass_guitar', 'drum', 'keyboards', 'saxophones', 'violin', 'electric_guitar', 'electric_keyboard', 'conga_drums', 'flute', 'talking_drums'] as const).optional(),
   care_group_leader_name: z.string().min(2, 'Leader name is required'),
-  care_group_leader_phone: z.string().min(10, 'Valid phone number is required'),
+  care_group_leader_phone: z.string().min(1, 'Phone number is required').refine(
+    (val) => {
+      const cleaned = val.replace(/[\s\-().]/g, '');
+      return /^(?:\+?234|0)[789]\d{9}$/.test(cleaned);
+    },
+    { message: 'Please enter a valid Nigerian phone number (e.g. +2348012345678 or 08012345678)' }
+  ),
   branch_id: z.string().min(1, 'Please select your branch'),
 });
 

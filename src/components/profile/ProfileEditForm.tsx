@@ -31,9 +31,21 @@ export function ProfileEditForm({ profile, onCancel, onSuccess }: ProfileEditFor
   });
 
   const updateProfile = useUpdateProfile();
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate phone numbers
+    if (formData.phone && !validateNigerianPhone(formData.phone)) {
+      toast({ title: 'Invalid phone number', description: 'Please enter a valid Nigerian phone number (e.g. +2348012345678)', variant: 'destructive' });
+      return;
+    }
+    if (formData.care_group_leader_phone && !validateNigerianPhone(formData.care_group_leader_phone)) {
+      toast({ title: 'Invalid phone number', description: 'Care group leader phone must be a valid Nigerian number', variant: 'destructive' });
+      return;
+    }
+
     await updateProfile.mutateAsync({
       id: profile.id,
       ...formData,
