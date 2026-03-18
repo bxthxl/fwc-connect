@@ -29,7 +29,14 @@ const years = Array.from({ length: 50 }, (_, i) => currentYear - i);
 
 const onboardingSchema = z.object({
   full_name: z.string().min(2, 'Name must be at least 2 characters').max(100),
-  phone: z.string().optional().or(z.literal('')),
+  phone: z.string().optional().or(z.literal('')).refine(
+    (val) => {
+      if (!val || val.trim() === '') return true;
+      const cleaned = val.replace(/[\s\-().]/g, '');
+      return /^(?:\+?234|0)[789]\d{9}$/.test(cleaned);
+    },
+    { message: 'Please enter a valid Nigerian phone number (e.g. +2348012345678 or 08012345678)' }
+  ),
   residence: z.string().min(5, 'Please enter your full address'),
   birthday: z.date({ required_error: 'Birthday is required' }),
   year_joined: z.number().min(1950).max(currentYear),
