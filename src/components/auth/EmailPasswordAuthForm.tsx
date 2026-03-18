@@ -368,9 +368,7 @@ export function EmailPasswordAuthForm({ onAuthSuccess, initialMode = 'signin' }:
                 </button>
               </div>
               {mode === 'signup' && (
-                <p className="text-xs text-muted-foreground">
-                  Password must be at least 6 characters
-                </p>
+                <PasswordStrengthIndicator password={password} />
               )}
             </div>
 
