@@ -226,6 +226,7 @@ async function handleWebhook(req: Request): Promise<Response> {
     token: payload.data.token,
     email: payload.data.email,
     newEmail: payload.data.new_email,
+    inviterName: payload.user?.user_metadata?.inviter_name,
   }
 
   // Render React Email to HTML and plain text
