@@ -18,22 +18,32 @@ interface InviteEmailProps {
   siteName: string
   siteUrl: string
   confirmationUrl: string
+  inviterName?: string
 }
 
 export const InviteEmail = ({
   siteName,
   siteUrl,
   confirmationUrl,
+  inviterName,
 }: InviteEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>You've been invited to join FWC Worship Team</Preview>
+    <Preview>{inviterName ? `${inviterName} has invited you to join FWC Worship Team` : "You've been invited to join FWC Worship Team"}</Preview>
     <Body style={main}>
       <Container style={container}>
         <Img src="https://ipbbhsjahjxnkzqxmqmd.supabase.co/storage/v1/object/public/email-assets/fwc-logo.png" width="64" height="64" alt="FWC Worship Team" style={logo} />
         <Heading style={h1}>You're Invited! 🎵</Heading>
         <Text style={text}>
-          You've been invited to join <strong>FWC Worship Team</strong>. Click the button below to accept the invitation and create your account.
+          {inviterName ? (
+            <>
+              <strong>{inviterName}</strong> has invited you to join <strong>FWC Worship Team</strong>. Click the button below to accept the invitation and create your account.
+            </>
+          ) : (
+            <>
+              You've been invited to join <strong>FWC Worship Team</strong>. Click the button below to accept the invitation and create your account.
+            </>
+          )}
         </Text>
         <Button style={button} href={confirmationUrl}>
           Accept Invitation
