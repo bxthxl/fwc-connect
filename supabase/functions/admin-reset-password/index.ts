@@ -51,12 +51,8 @@ Deno.serve(async (req) => {
     // Get the origin from the request for redirect
     const origin = req.headers.get('origin') || req.headers.get('referer')?.replace(/\/+$/, '') || '';
 
-    const { error } = await adminClient.auth.admin.generateLink({
-      type: 'recovery',
-      email,
-      options: {
-        redirectTo: `${origin}/reset-password`,
-      },
+    const { error } = await adminClient.auth.resetPasswordForEmail(email, {
+      redirectTo: `${origin}/reset-password`,
     });
 
     if (error) {
