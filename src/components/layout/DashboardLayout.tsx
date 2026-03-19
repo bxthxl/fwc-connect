@@ -195,7 +195,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
 
           <div className="flex items-center gap-1">
-            <InviteMemberDialog />
+            
             <NotificationBell />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
