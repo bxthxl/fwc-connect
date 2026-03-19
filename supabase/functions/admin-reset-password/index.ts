@@ -16,7 +16,6 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: corsHeaders });
     }
 
-    // Verify the caller is an admin
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_ANON_KEY')!,
@@ -30,8 +29,6 @@ Deno.serve(async (req) => {
     }
 
     const userId = claimsData.claims.sub;
-
-    // Check admin role
     const { data: isAdmin } = await supabase.rpc('is_admin', { auth_uid: userId });
     if (!isAdmin) {
       return new Response(JSON.stringify({ error: 'Admin access required' }), { status: 403, headers: corsHeaders });
@@ -42,17 +39,20 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Email is required' }), { status: 400, headers: corsHeaders });
     }
 
-    // Use service role to send password reset
     const adminClient = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     );
 
-    // Get the origin from the request for redirect
     const origin = req.headers.get('origin') || req.headers.get('referer')?.replace(/\/+$/, '') || '';
 
-    const { error } = await adminClient.auth.resetPasswordForEmail(email, {
-      redirectTo: `${origin}/reset-password`,
+    // Send a magic link - when user clicks it they'll land on /reset-password to set a new password
+    const { error } = await adminClient.auth.signInWithOtp({
+      email,
+      options: {
+        shouldCreateUser: false,
+        emailRedirectTo: `${origin}/reset-password`,
+      },
     });
 
     if (error) {
