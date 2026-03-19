@@ -75,13 +75,21 @@ Deno.serve(async (req) => {
     const origin = req.headers.get('origin') || `https://${ROOT_DOMAIN}`
 
     // Generate the invite link
-    const { data: linkData, error: linkError } = await adminClient.auth.admin.generateLink({
+    // Try invite first; if user already exists, fall back to magic link
+    let linkData, linkError
+    ;({ data: linkData, error: linkError } = await adminClient.auth.admin.generateLink({
       type: 'invite',
       email,
-      options: {
-        redirectTo: `${origin}/auth`,
-      },
-    })
+      options: { redirectTo: `${origin}/auth` },
+    }))
+
+    if (linkError?.message?.includes('already been registered')) {
+      ;({ data: linkData, error: linkError } = await adminClient.auth.admin.generateLink({
+        type: 'magiclink',
+        email,
+        options: { redirectTo: `${origin}/auth` },
+      }))
+    }
 
     if (linkError) {
       return new Response(JSON.stringify({ error: linkError.message }), {
