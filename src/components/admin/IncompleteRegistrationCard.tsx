@@ -26,7 +26,7 @@ export function IncompleteRegistrationCard({ user }: IncompleteRegistrationCardP
     try {
       const { data: { session } } = await supabase.auth.getSession();
       const resp = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/admin-reset-password`,
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/invite-member`,
         {
           method: 'POST',
           headers: {
@@ -38,7 +38,7 @@ export function IncompleteRegistrationCard({ user }: IncompleteRegistrationCardP
       );
       const result = await resp.json();
       if (!resp.ok) throw new Error(result.error);
-      toast({ title: 'Login link sent', description: `A magic link has been sent to ${user.email}` });
+      toast({ title: 'Invite sent', description: `An invitation has been sent to ${user.email}` });
     } catch (error: any) {
       toast({ title: 'Failed to send link', description: error.message, variant: 'destructive' });
     } finally {
