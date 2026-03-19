@@ -124,8 +124,9 @@ Deno.serve(async (req) => {
     })
 
     const { error: enqueueError } = await adminClient.rpc('enqueue_email', {
-      queue_name: 'auth_emails',
+      queue_name: 'transactional_emails',
       payload: {
+        run_id: crypto.randomUUID(),
         message_id: messageId,
         to: email,
         from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
