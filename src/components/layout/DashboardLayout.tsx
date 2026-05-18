@@ -59,6 +59,7 @@ const memberNavItems: NavItem[] = [
   { label: 'Songs', href: '/songs', icon: Music },
   { label: 'Minutes', href: '/minutes', icon: FileText },
   { label: 'Birthdays', href: '/birthdays', icon: Cake },
+  { label: 'Members', href: '/members', icon: Users },
   { label: 'Discussions', href: '/discussions', icon: MessageSquare },
   { label: 'Profile', href: '/profile', icon: User },
 ];
