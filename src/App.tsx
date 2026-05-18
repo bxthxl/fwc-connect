@@ -15,6 +15,7 @@ import EventsPage from "./pages/EventsPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import AdminOverviewPage from "./pages/admin/AdminOverviewPage";
 import MembersPage from "./pages/admin/MembersPage";
+import MembersDirectoryPage from "./pages/MembersDirectoryPage";
 import MeetingsManagementPage from "./pages/admin/MeetingsManagementPage";
 import AttendancePage from "./pages/admin/AttendancePage";
 import MinutesManagementPage from "./pages/admin/MinutesManagementPage";
