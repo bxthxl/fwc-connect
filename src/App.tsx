@@ -15,6 +15,7 @@ import EventsPage from "./pages/EventsPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import AdminOverviewPage from "./pages/admin/AdminOverviewPage";
 import MembersPage from "./pages/admin/MembersPage";
+import MembersDirectoryPage from "./pages/MembersDirectoryPage";
 import MeetingsManagementPage from "./pages/admin/MeetingsManagementPage";
 import AttendancePage from "./pages/admin/AttendancePage";
 import MinutesManagementPage from "./pages/admin/MinutesManagementPage";
@@ -78,6 +79,7 @@ function AppRoutes() {
       <Route path="/songs" element={<ProtectedRoute><SongsPage /></ProtectedRoute>} />
       <Route path="/birthdays" element={<ProtectedRoute><BirthdaysPage /></ProtectedRoute>} />
       <Route path="/discussions" element={<ProtectedRoute><DiscussionsPage /></ProtectedRoute>} />
+      <Route path="/members" element={<ProtectedRoute><MembersDirectoryPage /></ProtectedRoute>} />
       
       {/* Admin Routes */}
       <Route path="/admin" element={<AdminRoute requireAdmin><AdminOverviewPage /></AdminRoute>} />
